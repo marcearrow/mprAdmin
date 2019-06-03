@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1016147943101",
+    "firebase_url": "https://mprfirebase-7753b.firebaseio.com",
+    "project_id": "mprfirebase-7753b",
+    "storage_bucket": "mprfirebase-7753b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1016147943101:android:9c0f4cc3188f3944",
+        "android_client_info": {
+          "package_name": "com.mpreventos.admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1016147943101-6j4bkerhp6d439240bu1n2qeavqdpaas.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mpreventos.admin",
+            "certificate_hash": "ff30178d8869ac53f96095fa6c8e6ddf4b6517d6"
+          }
+        },
+        {
+          "client_id": "1016147943101-hrsib8vr2h949shbv3811hns9vlos8r3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNJTNL-_jpqXHPj2krCaazKcvEI6eMFW8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1016147943101-hrsib8vr2h949shbv3811hns9vlos8r3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

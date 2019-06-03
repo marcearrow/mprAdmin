@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".view.MainActivity"
+    android:layout_margin="@dimen/activity_vertical_margin">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/logompr"
+            android:layout_margin="@dimen/activity_vertical_margin" />
+
+    </RelativeLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/menuEventos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/eventos"
+        android:onClick="onClickMainActivity"
+        android:layout_margin="@dimen/activity_vertical_margin" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/menuTematicas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/tematicas"
+        android:onClick="onClickMainActivity"
+        android:layout_margin="@dimen/activity_vertical_margin" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/menuCategorias"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/categorias"
+        android:onClick="onClickMainActivity"
+        android:layout_margin="@dimen/activity_vertical_margin" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/menuProductos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/productos"
+        android:onClick="onClickMainActivity"
+        android:layout_margin="@dimen/activity_vertical_margin" />
+
+</LinearLayout>
