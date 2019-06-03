@@ -20,6 +20,7 @@ import com.mpreventos.admin.utils.Funciones;
 
 public class SignInActivity extends AppCompatActivity {
 
+    //variables
     private FirebaseAuth mAuth;
     private EditText mEmail;
     private EditText mPassword;
@@ -30,6 +31,7 @@ public class SignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
+        //generar instante a autentificacion
         mAuth = FirebaseAuth.getInstance();
 
         //buscar boton en vista
@@ -37,7 +39,7 @@ public class SignInActivity extends AppCompatActivity {
         mEmail = findViewById(R.id.edtSignInEmail);
         mPassword = findViewById(R.id.edtSignInPassword);
 
-        //asignar un evento al presionarlo
+        //asignar un evento al boton
         sigin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -46,19 +48,25 @@ public class SignInActivity extends AppCompatActivity {
         });
     }
 
+    //iniciar sesion
     public void iniciarSesion(String email, String password) {
+        //comprobar si los campos estan vacios
         if (Funciones.validarTexto(email) || Funciones.validarTexto(password)) {
-            mEmail.setError("Debe ingresar un correo");
-            mPassword.setError("Contraseña incorrecta");
-        } else {
+            mEmail.setError(getString(R.string.empyEmail));
+            mPassword.setError(getText(R.string.empyPasswrord));
+        } //si no estan vacio intentar inicio de sesion
+        else {
             mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
+                    //comprobar si los datos son correctos
                     if (task.isSuccessful()) {
+                        //asignar usuario logeado e ir al Activity principal
                         FirebaseUser user = mAuth.getCurrentUser();
-
                         closeActivity();
-                    } else {
+
+                    } //si ocurrio un error con la autentificacion enviar mensaje
+                    else {
                         Toast.makeText(SignInActivity.this, R.string.signIngFallido, Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -66,6 +74,7 @@ public class SignInActivity extends AppCompatActivity {
         }
     }
 
+    //cerrar SignInActivity y abrir activity principal
     private void closeActivity() {
         startActivity(new Intent(this, MainActivity.class));
         finish();

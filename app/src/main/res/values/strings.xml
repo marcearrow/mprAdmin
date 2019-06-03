@@ -10,5 +10,7 @@
     <string name="ini_sesion">Iniciar sesión</string>
     <string name="mpr_des">Ambientación de eventos</string>
     <string name="signIngExitoso">Inicio de sesión exitoso</string>
-    <string name="signIngFallido">No se pudo iniciar sesión</string>
+    <string name="signIngFallido">Los datos ingresados son incorrectos</string>
+    <string name="empyPasswrord">Debe ingresar una contraseña</string>
+    <string name="empyEmail">Debe ingresar un correo</string>
 </resources>

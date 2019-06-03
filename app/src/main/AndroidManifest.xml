@@ -9,12 +9,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".view.CategoriaLista"></activity>
+        <activity android:name=".view.ProductoLista" />
+        <activity android:name=".view.EventoLista" />
+        <activity android:name=".view.TematicaLista" />
         <activity
-            android:theme="@style/AppThemeNoActionBar"
-            android:name=".view.SignInActivity">
-
-        </activity>
-
+            android:name=".view.SignInActivity"
+            android:theme="@style/AppThemeNoActionBar" />
         <activity android:name=".view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -15,6 +15,7 @@ import com.mpreventos.admin.R;
 
 public class MainActivity extends AppCompatActivity {
 
+    //variables
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
 
@@ -24,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
+
+        //buscar si existe una sesion iniciada
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         if (mFirebaseUser == null) {
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
+        //asignar titulo a la toolbar
         setTitle("MPR eventos");
 
     }
@@ -52,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
             //cerrar sesion
             case R.id.sign_out_menu:
                 mFirebaseAuth.signOut();
+                //cerrar activity e ir a login
                 startActivity(new Intent(this, SignInActivity.class));
                 finish();
                 return true;
@@ -61,16 +66,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //metodo para abrir las diferentes listas
     public void onClickMainActivity(View view) {
         switch (view.getId()) {
             case R.id.menuTematicas:
+                startActivity(new Intent(this, TematicaLista.class));
+                finish();
                 break;
             case R.id.menuEventos:
+                startActivity(new Intent(this, EventoLista.class));
+                finish();
                 break;
             case R.id.menuProductos:
+                startActivity(new Intent(this, ProductoLista.class));
+                finish();
                 break;
             case R.id.menuCategorias:
+                startActivity(new Intent(this, CategoriaLista.class));
+                finish();
                 break;
         }
     }
+
 }
