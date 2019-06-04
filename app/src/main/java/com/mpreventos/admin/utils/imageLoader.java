@@ -16,7 +16,7 @@ public class imageLoader {
     }
 
     //cargar imagen con glide
-    public boolean setImgWithGlide(String imgUrl, ImageView imageView) {
+    public static boolean setImgWithGlide(String imgUrl, ImageView imageView) {
         if (imgUrl == null) {
             estado = false;
         } else {

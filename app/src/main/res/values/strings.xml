@@ -13,4 +13,6 @@
     <string name="signIngFallido">Los datos ingresados son incorrectos</string>
     <string name="empyPasswrord">Debe ingresar una contraseña</string>
     <string name="empyEmail">Debe ingresar un correo</string>
+    <string name="nombre">Nombre</string>
+    <string name="accesibility_event">imagen de un tipo de evento</string>
 </resources>
