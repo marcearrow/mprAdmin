@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -28,6 +29,8 @@ public class EventoAdd extends AppCompatActivity {
     DatabaseReference mDataBase;
     ImageView imagenEvento;
     EditText nombreEvento;
+    FirebaseHelper firebaseHelper;
+    Evento evento;
     Uri uri;
 
 
@@ -56,8 +59,8 @@ public class EventoAdd extends AppCompatActivity {
 
                 break;
             case R.id.btAddEvento:
-                FirebaseHelper firebaseHelper = new FirebaseHelper(mDataBase);
-                String id = firebaseHelper.getIdkey();
+                final FirebaseHelper firebaseHelper = new FirebaseHelper(mDataBase);
+                final String id = firebaseHelper.getIdkey();
                 Evento tempEvento = new Evento(id, nombreEvento.getText().toString(), LOADING_IMAGE_URL);
                 Boolean estado = firebaseHelper.guardarDatosFirebase(tempEvento, id);
 
@@ -67,8 +70,13 @@ public class EventoAdd extends AppCompatActivity {
                     estado = storageHelper.uploadImage(uri);
 
                     if (estado = true) {
-                        Evento evento = new Evento(id, nombreEvento.getText().toString(), uri.getLastPathSegment());
-                        firebaseHelper.guardarDatosFirebase(evento, evento.getId());
+                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                uptade(uri, id);
+                            }
+                        });
+
                         //TODO FALTA MOSTRAR AVISO DE QUE SE AGREGO EXITOSAMENTE
                     }
 
@@ -91,5 +99,11 @@ public class EventoAdd extends AppCompatActivity {
             }
 
         } else Toast.makeText(this, "La imagen no se pudo cargar", Toast.LENGTH_LONG).show();
+    }
+
+    public void uptade(Uri uri, String id) {
+        evento = new Evento(id, nombreEvento.getText().toString(), uri.toString());
+        firebaseHelper.guardarDatosFirebase(evento, evento.getId());
+
     }
 }

@@ -3,7 +3,10 @@ package com.mpreventos.admin.utils;
 import android.content.Context;
 import android.widget.ImageView;
 
+import androidx.core.content.ContextCompat;
+
 import com.bumptech.glide.Glide;
+import com.mpreventos.admin.R;
 
 public class imageLoader {
 
@@ -27,7 +30,7 @@ public class imageLoader {
                 estado = true;
 
             } catch (Exception ex) {
-
+                imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.logompr));
                 ex.getStackTrace();
                 estado = false;
             }
