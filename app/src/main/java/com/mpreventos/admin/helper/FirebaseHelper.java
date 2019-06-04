@@ -13,14 +13,14 @@ public class FirebaseHelper {
     }
 
     //Guardar datos en Firebase
-    public Boolean guardarFirebase(Class clase) {
+    public Boolean guardarDatosFirebase(Object clase, String key) {
 
         if (clase == null) {
             estado = false;
             return estado;
         } else {
             try {
-                db.child(clase.getName()).setValue(clase);
+                db.child(key).setValue(clase);
                 estado = true;
             } catch (DatabaseException ex) {
                 ex.printStackTrace();
@@ -31,12 +31,12 @@ public class FirebaseHelper {
     }
 
     //Generar idKey
-    public String idkey() {
+    public String getIdkey() {
         return db.push().getKey();
     }
 
     //Remover item
-    public Boolean EliminarFirebase(String nodo, String key) {
+    public Boolean EliminarNodoFirebase(String nodo, String key) {
         if (nodo == null) {
             estado = false;
         } else {

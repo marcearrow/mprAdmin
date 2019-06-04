@@ -3,7 +3,6 @@ package com.mpreventos.admin.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +13,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.adapter.EventoAdapter;
@@ -37,10 +37,10 @@ public class EventoLista extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_evento_lista);
-
+        db = FirebaseDatabase.getInstance().getReference();
         setTitle(R.string.eventos);
 
-        recyclerView.findViewById(R.id.recyclerEvento);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerEvento);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         obtenerEventos();
@@ -84,7 +84,7 @@ public class EventoLista extends AppCompatActivity {
             });
 
         } catch (Exception ex) {
-            Toast.makeText(this, ex.toString(), Toast.LENGTH_SHORT).show();
+            // Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
         }
     }
 

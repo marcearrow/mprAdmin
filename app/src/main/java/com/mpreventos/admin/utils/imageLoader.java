@@ -7,8 +7,9 @@ import com.bumptech.glide.Glide;
 
 public class imageLoader {
 
-    private Context context;
-    private boolean estado;
+    private static boolean estado;
+    private static Context context;
+
 
     //constructor para cargar imiagen
     public imageLoader(Context context) {

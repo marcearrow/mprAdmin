@@ -13,12 +13,13 @@ public class StorageHelper {
         this.storageReference = storageReference;
     }
 
-    public Boolean uploadImage(Uri uri, String nodo) {
+    //TODO: MODIFICAR PATH DEL ARCHIVO Y DE LA BD
+    public Boolean uploadImage(Uri uri) {
         if (uri == null) {
             estado = false;
         } else {
             try {
-                storageReference.child(nodo).putFile(uri);
+                storageReference.putFile(uri);
                 estado = true;
             } catch (Exception ex) {
                 ex.printStackTrace();

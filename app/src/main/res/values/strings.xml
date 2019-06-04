@@ -15,4 +15,8 @@
     <string name="empyEmail">Debe ingresar un correo</string>
     <string name="nombre">Nombre</string>
     <string name="accesibility_event">imagen de un tipo de evento</string>
+    <string name="seleccionar_imagen">Seleccionar Imagen</string>
+    <string name="nombre_evento">Nombre evento:</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="agregar">Agregar</string>
 </resources>

@@ -48,6 +48,7 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.viewHolder
                 imageLoader.setImgWithGlide(evento.getImgUrl(), holder.imageView);
             } catch (Exception ex) {
                 Toast.makeText(context, "Ocurrio un error", Toast.LENGTH_SHORT).show();
+                holder.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.logompr));
             }
 
         }

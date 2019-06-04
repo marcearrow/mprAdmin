@@ -71,19 +71,19 @@ public class MainActivity extends AppCompatActivity {
         switch (view.getId()) {
             case R.id.menuTematicas:
                 startActivity(new Intent(this, TematicaLista.class));
-                finish();
+
                 break;
             case R.id.menuEventos:
                 startActivity(new Intent(this, EventoLista.class));
-                finish();
+
                 break;
             case R.id.menuProductos:
                 startActivity(new Intent(this, ProductoLista.class));
-                finish();
+
                 break;
             case R.id.menuCategorias:
                 startActivity(new Intent(this, CategoriaLista.class));
-                finish();
+
                 break;
         }
     }
