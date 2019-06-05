@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/cardEvent"
         android:layout_marginBottom="4dp"
-        android:layout_marginRight="4dp"
+        android:layout_marginEnd="4dp"
         style="@style/CardView.Light">
 
         <FrameLayout
@@ -27,7 +27,7 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:layout_marginTop="200dp"
             android:text="@string/nombre"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"

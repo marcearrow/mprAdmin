@@ -1,4 +1,4 @@
-package com.mpreventos.admin.view;
+package com.mpreventos.admin.controller;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -38,10 +37,11 @@ public class EventoAdd extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_evento_add);
+        setTitle("Agregar Evento");
 
         mDataBase = FirebaseDatabase.getInstance().getReference(EVENTOS_CHILD);
-        nombreEvento = (EditText) findViewById(R.id.editNombreEvento);
-        imagenEvento = (ImageView) findViewById(R.id.imgEvento);
+        nombreEvento = findViewById(R.id.editNombreEvento);
+        imagenEvento = findViewById(R.id.imgEvento);
 
     }
 
@@ -64,21 +64,16 @@ public class EventoAdd extends AppCompatActivity {
                 Evento tempEvento = new Evento(id, nombreEvento.getText().toString(), LOADING_IMAGE_URL);
                 Boolean estado = firebaseHelper.guardarDatosFirebase(tempEvento, id);
 
-                if (estado == true && uri != null) {
+                if (estado && uri != null) {
                     StorageReference storageReference = FirebaseStorage.getInstance().getReference(EVENTOS_CHILD).child(id);
                     StorageHelper storageHelper = new StorageHelper(storageReference);
-                    estado = storageHelper.uploadImage(uri);
+                    //storageHelper.uploadImage(uri);
 
-                    if (estado = true) {
-                        storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                            @Override
-                            public void onSuccess(Uri uri) {
-                                uptade(uri, id);
-                            }
-                        });
-
-                        //TODO FALTA MOSTRAR AVISO DE QUE SE AGREGO EXITOSAMENTE
-                    }
+                    //FALTA EL RETORNO
+                    // if (url !=null) {
+                    //    evento = new Evento(id, nombreEvento.getText().toString(), url);
+                    //    firebaseHelper.guardarDatosFirebase(evento, evento.getId());
+                    //}
 
                 }
 
@@ -101,9 +96,4 @@ public class EventoAdd extends AppCompatActivity {
         } else Toast.makeText(this, "La imagen no se pudo cargar", Toast.LENGTH_LONG).show();
     }
 
-    public void uptade(Uri uri, String id) {
-        evento = new Evento(id, nombreEvento.getText().toString(), uri.toString());
-        firebaseHelper.guardarDatosFirebase(evento, evento.getId());
-
-    }
 }

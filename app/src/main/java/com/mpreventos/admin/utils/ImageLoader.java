@@ -8,19 +8,19 @@ import androidx.core.content.ContextCompat;
 import com.bumptech.glide.Glide;
 import com.mpreventos.admin.R;
 
-public class imageLoader {
+public class ImageLoader {
 
     private static boolean estado;
-    private static Context context;
+    private Context context;
 
 
     //constructor para cargar imiagen
-    public imageLoader(Context context) {
+    public ImageLoader(Context context) {
         this.context = context;
     }
 
     //cargar imagen con glide
-    public static boolean setImgWithGlide(String imgUrl, ImageView imageView) {
+    public boolean setImgWithGlide(String imgUrl, ImageView imageView) {
         if (imgUrl == null) {
             estado = false;
         } else {

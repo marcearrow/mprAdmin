@@ -19,4 +19,9 @@
     <string name="nombre_evento">Nombre evento:</string>
     <string name="cancelar">Cancelar</string>
     <string name="agregar">Agregar</string>
+    <string name="cambiar_imagen">Cambiar imagen</string>
+    <string name="modificar">Modificar</string>
+    <string name="nombre_tematica">Nombre tematica:</string>
+    <string name="accesibility_tematica">imagen correspondiente a una tematica en especifico</string>
+    <string name="descripcion">descripcion</string>
 </resources>

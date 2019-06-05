@@ -15,42 +15,42 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mpreventos.admin.R;
-import com.mpreventos.admin.controller.EventoDetalles;
-import com.mpreventos.admin.model.Evento;
+import com.mpreventos.admin.controller.TematicaDetalles;
+import com.mpreventos.admin.model.Tematica;
 import com.mpreventos.admin.utils.ImageLoader;
 
 import java.util.ArrayList;
 
-public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.viewHolderEventos> {
-
+public class TematicaAdapter extends RecyclerView.Adapter<TematicaAdapter.viewHolderTematicas> {
     private int resource;
-    private ArrayList<Evento> eventoLista;
+    private ArrayList<Tematica> temacaLista;
     private Context context;
 
-    public EventoAdapter(int resource, ArrayList<Evento> eventoLista, Context context) {
+    public TematicaAdapter(int resource, ArrayList<Tematica> temacaLista, Context context) {
         this.resource = resource;
-        this.eventoLista = eventoLista;
+        this.temacaLista = temacaLista;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public viewHolderEventos onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public viewHolderTematicas onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(resource, parent, false);
-        return new viewHolderEventos(view);
+        return new viewHolderTematicas(view);
+
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final viewHolderEventos holder, int position) {
-        Evento evento = eventoLista.get(position);
-        final String idevento = evento.getId();
-        holder.textView.setText(evento.getNombre());
-        if (evento.getImgUrl() == null) {
+    public void onBindViewHolder(@NonNull viewHolderTematicas holder, int position) {
+        Tematica tematica = temacaLista.get(position);
+        final String idTematica = tematica.getId();
+        holder.textView.setText(tematica.getNombre());
+        if (tematica.getImgUrl() == null) {
             holder.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.logompr));
         } else {
             try {
                 ImageLoader imageLoader = new ImageLoader(context);
-                imageLoader.setImgWithGlide(evento.getImgUrl(), holder.imageView);
+                imageLoader.setImgWithGlide(tematica.getImgUrl(), holder.imageView);
             } catch (Exception ex) {
                 Toast.makeText(context, "Ocurrio un error", Toast.LENGTH_SHORT).show();
                 //holder.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.logompr));
@@ -59,31 +59,32 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.viewHolder
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), EventoDetalles.class);
-                    intent.putExtra("id", idevento);
+                    Intent intent = new Intent(v.getContext(), TematicaDetalles.class);
+                    intent.putExtra("id", idTematica);
                     v.getContext().startActivity(intent);
                 }
             });
         }
+
     }
 
     @Override
     public int getItemCount() {
-        return eventoLista.size();
+        return temacaLista.size();
     }
 
-    class viewHolderEventos extends RecyclerView.ViewHolder {
+    class viewHolderTematicas extends RecyclerView.ViewHolder {
 
         ImageView imageView;
         TextView textView;
         CardView cardView;
 
-        private viewHolderEventos(@NonNull View itemView) {
+        private viewHolderTematicas(@NonNull View itemView) {
             super(itemView);
 
-            this.imageView = itemView.findViewById(R.id.imageCardEvent);
-            this.textView = itemView.findViewById(R.id.cardTextName);
-            this.cardView = itemView.findViewById(R.id.cardEvent);
+            this.imageView = itemView.findViewById(R.id.imageCardTematica);
+            this.textView = itemView.findViewById(R.id.cardTextNameTematica);
+            this.cardView = itemView.findViewById(R.id.cardTematica);
 
         }
     }

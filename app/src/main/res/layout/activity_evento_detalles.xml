@@ -3,33 +3,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context=".controller.EventoAdd">
+    tools:context=".controller.EventoDetalles"
+    android:layout_margin="@dimen/activity_vertical_margin">
 
     <ImageView
-        android:id="@+id/imgEvento"
+        android:id="@+id/imgEventoDetalles"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:contentDescription="@string/accesibility_event" />
+        android:layout_height="300dp" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btSelectImagen"
+        android:id="@+id/btSelectImagenDetalles"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/seleccionar_imagen"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:onClick="onClickAddEvento" />
+        android:onClick="onClicEventoDetalles"
+        android:contentDescription="@string/accesibility_event"
+        android:text="@string/cambiar_imagen" />
 
     <androidx.appcompat.widget.AppCompatTextView
+        style="@style/TextAppearance.MaterialComponents.Body1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/nombre_evento"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        style="@style/TextAppearance.MaterialComponents.Body1" />
+        android:text="@string/nombre_evento" />
 
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/editNombreEvento"
+        android:id="@+id/editNombreEventoDetalles"
         android:layout_width="match_parent"
         android:layout_height="32dp" />
 
@@ -40,22 +40,23 @@
         android:gravity="center_horizontal">
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btCancelarEvento"
+            android:id="@+id/btCancelarEventoDetalles"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/activity_vertical_margin"
+            android:onClick="onClicEventoDetalles"
             android:text="@string/cancelar"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:textColor="@color/colorPrimaryDark"
-            android:onClick="onClickAddEvento" />
+            android:textColor="@color/colorPrimaryDark" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btAddEvento"
+            android:id="@+id/btEventoDetalles"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/activity_vertical_margin"
-            android:text="@string/agregar"
-            android:onClick="onClickAddEvento" />
+            android:onClick="onClicEventoDetalles"
+            android:text="@string/modificar" />
 
     </LinearLayout>
+
 </LinearLayout>

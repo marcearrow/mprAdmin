@@ -5,13 +5,13 @@ public class Tematica {
     //atributos Tematica
     private String id;
     private String nombre;
-    private String urlImg;
+    private String imgUrl;
 
     //constructor Tematica
-    public Tematica(String id, String nombre, String urlImg) {
+    public Tematica(String id, String nombre, String imgUrl) {
         this.id = id;
         this.nombre = nombre;
-        this.urlImg = urlImg;
+        this.imgUrl = imgUrl;
     }
 
     //getter y setters Tematica
@@ -31,12 +31,11 @@ public class Tematica {
         this.nombre = nombre;
     }
 
-    public String getUrlImg() {
-        return urlImg;
+    public String getImgUrl() {
+        return imgUrl;
     }
 
-    public void setUrlImg(String urlImg) {
-        this.urlImg = urlImg;
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
-
 }
