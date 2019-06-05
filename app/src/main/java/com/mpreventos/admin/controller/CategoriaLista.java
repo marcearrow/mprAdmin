@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 public class CategoriaLista extends AppCompatActivity {
 
-    private static final String CATEGORIA_CHILD = "categoria";
+    private static final String CATEGORIA_CHILD = "categorias";
     private DatabaseReference db;
     private FirebaseHelper firebaseHelper;
     private RecyclerView recyclerView;
@@ -67,7 +67,7 @@ public class CategoriaLista extends AppCompatActivity {
                             if (ds.child("id") != null) {
                                 String nombre = ds.child("nombre").getValue().toString();
                                 String imgUrl = ds.child("imgUrl").getValue().toString();
-                                String descripcion = ds.child("descipcion").getValue().toString();
+                                String descripcion = ds.child("descripcion").getValue().toString();
                                 String id = ds.child("id").getValue().toString();
                                 categoriaLista.add(new Categoria(id, nombre, descripcion, imgUrl));
                             }

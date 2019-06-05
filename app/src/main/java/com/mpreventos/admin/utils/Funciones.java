@@ -10,4 +10,5 @@ public class Funciones {
         estado = !TextUtils.isEmpty(texto);
         return !estado;
     }
+
 }

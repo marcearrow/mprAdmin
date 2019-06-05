@@ -29,7 +29,7 @@ public class EventoAdd extends AppCompatActivity {
     ImageView imagenEvento;
     EditText nombreEvento;
     FirebaseHelper firebaseHelper;
-    Evento evento;
+    Evento tempEvento;
     Uri uri;
 
 
@@ -59,9 +59,9 @@ public class EventoAdd extends AppCompatActivity {
 
                 break;
             case R.id.btAddEvento:
-                final FirebaseHelper firebaseHelper = new FirebaseHelper(mDataBase);
+                firebaseHelper = new FirebaseHelper(mDataBase);
                 final String id = firebaseHelper.getIdkey();
-                Evento tempEvento = new Evento(id, nombreEvento.getText().toString(), LOADING_IMAGE_URL);
+                tempEvento = new Evento(id, nombreEvento.getText().toString(), LOADING_IMAGE_URL);
                 Boolean estado = firebaseHelper.guardarDatosFirebase(tempEvento, id);
 
                 if (estado && uri != null) {

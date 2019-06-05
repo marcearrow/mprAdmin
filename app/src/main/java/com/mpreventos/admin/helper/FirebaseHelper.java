@@ -8,6 +8,7 @@ public class FirebaseHelper {
     private DatabaseReference db;
     private Boolean estado;
 
+    //constructor firebasehelper
     public FirebaseHelper(DatabaseReference db) {
         this.db = db;
     }
@@ -35,7 +36,7 @@ public class FirebaseHelper {
         return db.push().getKey();
     }
 
-    //Remover item
+    //Eliminar item
     public Boolean EliminarNodoFirebase(String nodo, String key) {
         if (nodo == null) {
             estado = false;
