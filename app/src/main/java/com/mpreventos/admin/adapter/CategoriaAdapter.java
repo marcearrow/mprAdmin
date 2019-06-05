@@ -84,6 +84,7 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.view
         private viewHolderCategoria(@NonNull View itemView) {
             super(itemView);
 
+
             this.imageView = itemView.findViewById(R.id.cardImagenCategoria);
             this.cardView = itemView.findViewById(R.id.cardCategoria);
             this.textViewNombre = itemView.findViewById(R.id.cardTextNameCategoria);
