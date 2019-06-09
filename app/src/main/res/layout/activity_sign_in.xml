@@ -40,9 +40,11 @@
         android:text="@string/email" />
 
     <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edtSignInEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/edtSignInEmail" />
+        android:autoText="false"
+        android:inputType="textEmailAddress" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_marginTop="@dimen/activity_vertical_margin"

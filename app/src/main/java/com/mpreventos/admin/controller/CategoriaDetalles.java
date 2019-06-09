@@ -17,8 +17,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mpreventos.admin.R;
+import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.model.Categoria;
-import com.mpreventos.admin.utils.ImageLoader;
+import com.mpreventos.admin.utils.Funciones;
 
 public class CategoriaDetalles extends AppCompatActivity {
 
@@ -50,7 +51,8 @@ public class CategoriaDetalles extends AppCompatActivity {
                 tvNombre.setText(dataSnapshot.child("nombre").getValue().toString());
                 tvDescripcion.setText(dataSnapshot.child("descripcion").getValue().toString());
                 imgUrl = dataSnapshot.child("imgUrl").getValue().toString();
-                setImg(imgUrl);
+                Funciones funciones = new Funciones();
+                funciones.setImg(imgUrl, imagenCategoriaDetalles, getApplicationContext());
             }
 
             @Override
@@ -74,24 +76,10 @@ public class CategoriaDetalles extends AppCompatActivity {
 
                 break;
             case R.id.btModCategoriaDetalles:
-                modificarDatos();
+                FirebaseHelper firebaseHelper = new FirebaseHelper(mDatabase);
+                Categoria categoria = new Categoria(id, tvNombre.getText().toString(), tvDescripcion.getText().toString(), imgUrl);
                 break;
 
-        }
-
-    }
-
-    private void setImg(String imgUrl) {
-        if (imgUrl != null) {
-            try {
-                ImageLoader imageLoader = new ImageLoader(getApplicationContext());
-                imageLoader.setImgWithGlide(imgUrl, imagenCategoriaDetalles);
-            } catch (Exception ex) {
-                Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
-
-            }
-        } else {
-            Toast.makeText(this, "no se pudo cargar la imagen", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -111,9 +99,4 @@ public class CategoriaDetalles extends AppCompatActivity {
         } else Toast.makeText(this, "La imagen no se pudo cargar", Toast.LENGTH_LONG).show();
     }
 
-    private void modificarDatos() {
-        //falta modificar storage
-        Categoria categoria = new Categoria(id, tvNombre.getText().toString(), tvDescripcion.getText().toString(), imgUrl);
-        mDatabase.setValue(categoria);
-    }
 }

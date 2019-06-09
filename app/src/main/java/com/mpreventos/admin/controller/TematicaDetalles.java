@@ -19,7 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.model.Tematica;
-import com.mpreventos.admin.utils.ImageLoader;
+import com.mpreventos.admin.utils.Funciones;
 
 public class TematicaDetalles extends AppCompatActivity {
 
@@ -47,8 +47,9 @@ public class TematicaDetalles extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 nombreTematica.setText(dataSnapshot.child("nombre").getValue().toString());
                 imgUrl = dataSnapshot.child("imgUrl").getValue().toString();
-                //TODO COLOCAR setImg en FUNCIONES UTIDLIDAD;
-                setImg(imgUrl);
+                Funciones funciones = new Funciones();
+                funciones.setImg(imgUrl, imagenTematica, getApplicationContext());
+
             }
 
             @Override
@@ -72,30 +73,14 @@ public class TematicaDetalles extends AppCompatActivity {
 
                 break;
             case R.id.btModTematicaDetalles:
-                modificarDatos();
+                Tematica tematica = new Tematica(id, nombreTematica.getText().toString(), imgUrl);
+                firebaseHelper = new FirebaseHelper(mDataBase);
+                firebaseHelper.guardarDatosFirebase(tematica, null);
+
                 break;
         }
     }
 
-    private void modificarDatos() {
-        Tematica tematica = new Tematica(id, nombreTematica.getText().toString(), imgUrl);
-        mDataBase.setValue(tematica);
-    }
-
-
-    private void setImg(String imgUrl) {
-        if (imgUrl != null) {
-            try {
-                ImageLoader imageLoader = new ImageLoader(getApplicationContext());
-                imageLoader.setImgWithGlide(imgUrl, imagenTematica);
-            } catch (Exception ex) {
-                Toast.makeText(this, ex.toString(), Toast.LENGTH_LONG).show();
-
-            }
-        } else {
-            Toast.makeText(this, "no se pudo cargar la imagen", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

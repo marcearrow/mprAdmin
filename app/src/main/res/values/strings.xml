@@ -2,7 +2,7 @@
     <string name="app_name">Mpr Eventos</string>
     <string name="sign_out">Cerrar sesión</string>
     <string name="eventos">Eventos</string>
-    <string name="tematicas">Tematicas</string>
+    <string name="tematicas">Temáticas</string>
     <string name="categorias">Categorias</string>
     <string name="productos">Productos</string>
     <string name="email">Email:</string>
@@ -21,10 +21,12 @@
     <string name="agregar">Agregar</string>
     <string name="cambiar_imagen">Cambiar imagen</string>
     <string name="modificar">Modificar</string>
-    <string name="nombre_tematica">Nombre tematica:</string>
-    <string name="accesibility_tematica">imagen correspondiente a una tematica en especifico</string>
-    <string name="descripcion">descripcion</string>
-    <string name="accesibility_categoria">Imagen que representa a una categoria</string>
-    <string name="nombre_categoria">Nombre categoria:</string>
-    <string name="descripcion_categoria">Descripcion categoria:</string>
+    <string name="nombre_tematica">Nombre temática:</string>
+    <string name="accesibility_tematica">imagen correspondiente a una temática en especifico</string>
+    <string name="descripcion">descripción</string>
+    <string name="accesibility_categoria">Imagen que representa a una categoría</string>
+    <string name="nombre_categoria">Nombre categoría:</string>
+    <string name="descripcion_categoria">Descripcion categoría:</string>
+    <string name="nombre_producto">Nombre producto:</string>
+    <string name="descripcion_producto">Descripción producto:</string>
 </resources>

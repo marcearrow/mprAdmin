@@ -63,7 +63,7 @@ public class TematicaLista extends AppCompatActivity {
                         tematicaLista.clear();
 
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            if (ds.child("id") != null) {
+                            if (ds.child("id").getValue() != null) {
                                 String nombre = ds.child("nombre").getValue().toString();
                                 String imgUrl = ds.child("imgUrl").getValue().toString();
                                 String id = ds.child("id").getValue().toString();

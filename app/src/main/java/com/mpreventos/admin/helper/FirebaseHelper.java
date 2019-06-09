@@ -19,6 +19,14 @@ public class FirebaseHelper {
         if (clase == null) {
             estado = false;
             return estado;
+        } else if (key == null) {
+            try {
+                db.setValue(clase);
+                estado = true;
+            } catch (DatabaseException ex) {
+                ex.printStackTrace();
+                estado = false;
+            }
         } else {
             try {
                 db.child(key).setValue(clase);

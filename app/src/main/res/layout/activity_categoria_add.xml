@@ -32,7 +32,7 @@
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/editNombreCategoria"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="50dp"
         android:layout_marginStart="@dimen/activity_vertical_margin"
         android:layout_marginEnd="@dimen/activity_vertical_margin" />
 
@@ -48,7 +48,7 @@
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/editDescripcionCategoria"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="50dp"
         android:layout_marginStart="@dimen/activity_vertical_margin"
         android:layout_marginEnd="@dimen/activity_vertical_margin" />
 

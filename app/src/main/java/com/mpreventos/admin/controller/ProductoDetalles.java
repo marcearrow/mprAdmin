@@ -18,70 +18,73 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.helper.FirebaseHelper;
-import com.mpreventos.admin.model.Evento;
+import com.mpreventos.admin.model.Producto;
 import com.mpreventos.admin.utils.Funciones;
 
-public class EventoDetalles extends AppCompatActivity {
+public class ProductoDetalles extends AppCompatActivity {
 
-    private static final String EVENTOS_CHILD = "eventos";
+    private static final String PRODUCTOS_CHILD = "productos";
     private static final int REQUEST_IMAGE = 2;
-    private Uri uri;
-    private String id;
-    private EditText nombreEvento;
-    private ImageView imagenEvento;
-    private DatabaseReference mDatabase;
-    private String imgUrl;
-    private FirebaseHelper firebaseHelper;
+    private static final String LOADING_IMAGE_URL = "https://firebasestorage.googleapis.com/v0/b/mprfirebase-7753b.appspot.com/o/logo-mpr-decoracion.png?alt=media&token=49548e12-c035-4995-be4d-f38be90bbc06";
+    DatabaseReference mDataBase;
+    ImageView imagenProducto;
+    EditText nombreProducto;
+    EditText descripcionProducto;
+    FirebaseHelper firebaseHelper;
+    Producto temProducto;
+    String id;
+    String imgUrl;
+    Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_evento_detalles);
-        setTitle("Modificar Evento");
+        setContentView(R.layout.activity_producto_detalles);
 
         id = getIntent().getStringExtra("id");
-        nombreEvento = findViewById(R.id.editNombreEventoDetalles);
-        imagenEvento = findViewById(R.id.imgEventoDetalles);
+        mDataBase = FirebaseDatabase.getInstance().getReference(PRODUCTOS_CHILD).child(id);
+        nombreProducto = findViewById(R.id.editNombreProductoDetalles);
+        descripcionProducto = findViewById(R.id.editDescripcionProductoDetalles);
+        imagenProducto = findViewById(R.id.imageViewProductoDetalles);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference(EVENTOS_CHILD).child(id);
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        mDataBase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                nombreEvento.setText(dataSnapshot.child("nombre").getValue().toString());
+                nombreProducto.setText(dataSnapshot.child("nombre").getValue().toString());
+                descripcionProducto.setText(dataSnapshot.child("descripcion").getValue().toString());
                 imgUrl = dataSnapshot.child("imgUrl").getValue().toString();
                 Funciones funciones = new Funciones();
-                funciones.setImg(imgUrl, imagenEvento, getApplicationContext());
+                funciones.setImg(imgUrl, imagenProducto, getApplicationContext());
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
 
     }
 
-
-    public void onClicEventoDetalles(View view) {
+    public void onClickProductosDetalles(View view) {
         switch (view.getId()) {
-            case R.id.btCancelarEventoDetalles:
+            case R.id.btCancelarProductoDetalles:
                 finish();
                 break;
-            case R.id.btSelectImagenDetalles:
-
+            case R.id.btSelectImagenProductosDetalles:
                 Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);
                 intent.setType("image/*");
                 startActivityForResult(intent, REQUEST_IMAGE);
-
                 break;
-            case R.id.btEventoDetalles:
-                Evento evento = new Evento(id, nombreEvento.getText().toString(), imgUrl);
-                firebaseHelper = new FirebaseHelper(mDatabase);
-                firebaseHelper.guardarDatosFirebase(evento, null);
+            case R.id.btModProductoDetalles:
+                temProducto = new Producto(id, nombreProducto.getText().toString(), descripcionProducto.getText().toString(), imgUrl);
+                firebaseHelper = new FirebaseHelper(mDataBase);
+                firebaseHelper.guardarDatosFirebase(temProducto, null);
                 break;
-
         }
     }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -90,7 +93,7 @@ public class EventoDetalles extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
                     uri = data.getData();
-                    imagenEvento.setImageURI(uri);
+                    imagenProducto.setImageURI(uri);
                     Toast.makeText(this, "La imagen se cargo correctamente", Toast.LENGTH_LONG).show();
                 }
             }

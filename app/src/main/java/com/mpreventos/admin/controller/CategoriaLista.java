@@ -64,7 +64,7 @@ public class CategoriaLista extends AppCompatActivity {
                         categoriaLista.clear();
 
                         for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            if (ds.child("id") != null) {
+                            if (ds.child("id").getValue() != null) {
                                 String nombre = ds.child("nombre").getValue().toString();
                                 String imgUrl = ds.child("imgUrl").getValue().toString();
                                 String descripcion = ds.child("descripcion").getValue().toString();
