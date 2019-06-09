@@ -1,16 +1,28 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light">
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppThemeNoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">
+
+    <style name="AppThemeNoActionBarSpinner" parent="Theme.MaterialComponents.DayNight.DarkActionBar.Bridge">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:spinnerItemStyle">@style/SpinnerItem</item>
     </style>
+
+    <style name="SpinnerItem" parent="@android:style/Widget.TextView.SpinnerItem">
+        <item name="android:textColor">#00FF00</item>
+    </style>
+
+    <style name="SpinnerItem.DropDownItem" parent="@android:style/Widget.DropDownItem.Spinner">
+        <item name="android:textColor">#00FF00</item>
+    </style>
+
+
 </resources>

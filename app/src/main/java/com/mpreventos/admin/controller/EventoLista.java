@@ -29,7 +29,7 @@ public class EventoLista extends AppCompatActivity {
     private FirebaseHelper firebaseHelper;
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
-    private EventoAdapter eventoAdapter;
+    public EventoAdapter eventoAdapter;
 
     private ArrayList<Evento> eventoLista = new ArrayList<>();
 
@@ -56,7 +56,7 @@ public class EventoLista extends AppCompatActivity {
 
     }
 
-    private void obtenerEventos() {
+    public void obtenerEventos() {
         try {
             db.child(EVENT_CHILD).getRef().addValueEventListener(new ValueEventListener() {
                 @Override

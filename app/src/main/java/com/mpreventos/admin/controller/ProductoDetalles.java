@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -35,6 +36,7 @@ public class ProductoDetalles extends AppCompatActivity {
     String id;
     String imgUrl;
     Uri uri;
+    Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,7 @@ public class ProductoDetalles extends AppCompatActivity {
         nombreProducto = findViewById(R.id.editNombreProductoDetalles);
         descripcionProducto = findViewById(R.id.editDescripcionProductoDetalles);
         imagenProducto = findViewById(R.id.imageViewProductoDetalles);
+        spinner = findViewById(R.id.spinnerEventoProducto);
 
         mDataBase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -63,6 +66,7 @@ public class ProductoDetalles extends AppCompatActivity {
 
             }
         });
+
 
     }
 
@@ -100,4 +104,6 @@ public class ProductoDetalles extends AppCompatActivity {
 
         } else Toast.makeText(this, "La imagen no se pudo cargar", Toast.LENGTH_LONG).show();
     }
+
+
 }

@@ -23,9 +23,7 @@
         <activity android:name=".controller.ProductoLista" />
         <activity android:name=".controller.EventoLista" />
         <activity android:name=".controller.TematicaLista" />
-        <activity
-            android:name=".controller.SignInActivity"
-            android:theme="@style/AppThemeNoActionBar" />
+        <activity android:name=".controller.SignInActivity" />
         <activity android:name=".controller.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

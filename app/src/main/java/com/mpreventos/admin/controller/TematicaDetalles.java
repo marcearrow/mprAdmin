@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,10 +23,13 @@ import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.model.Tematica;
 import com.mpreventos.admin.utils.Funciones;
 
+import java.util.ArrayList;
+
 public class TematicaDetalles extends AppCompatActivity {
 
     private static final String TEMATICAS_CHILD = "tematicas";
     private static final int REQUEST_IMAGE = 2;
+    private static final String LOG = "logSpinner";
     private Uri uri;
     DatabaseReference mDataBase;
     ImageView imagenTematica;
@@ -32,6 +37,7 @@ public class TematicaDetalles extends AppCompatActivity {
     FirebaseHelper firebaseHelper;
     String id;
     String imgUrl;
+    Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +48,7 @@ public class TematicaDetalles extends AppCompatActivity {
         mDataBase = FirebaseDatabase.getInstance().getReference(TEMATICAS_CHILD).child(id);
         nombreTematica = findViewById(R.id.editNombreTematicaDetalles);
         imagenTematica = findViewById(R.id.imgTematicaDetalles);
+        spinner = findViewById(R.id.spinnerTematicaDetalles);
         mDataBase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -57,6 +64,8 @@ public class TematicaDetalles extends AppCompatActivity {
 
             }
         });
+
+        spinner.setAdapter(new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, eventos()));
     }
 
     public void onClickTematicaDetalles(View view) {
@@ -96,5 +105,31 @@ public class TematicaDetalles extends AppCompatActivity {
 
         } else Toast.makeText(this, "La imagen no se pudo cargar", Toast.LENGTH_LONG).show();
     }
+
+    private ArrayList<String> eventos() {
+        final ArrayList<String> eventos = new ArrayList<>();
+        mDataBase = FirebaseDatabase.getInstance().getReference();
+        mDataBase.child("eventos").getRef().addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                eventos.clear();
+
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if (ds.child("id").getValue() != null) {
+                        String nombre = ds.child("nombre").getValue().toString();
+                        eventos.add(nombre);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+
+            }
+        });
+        return eventos;
+    }
+
 
 }
