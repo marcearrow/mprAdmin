@@ -11,13 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".controller.ProductoDetalles"></activity>
         <activity android:name=".controller.ProductoAdd" />
         <activity android:name=".controller.CategoriaAdd" />
-        <activity android:name=".controller.CategoriaDetalles" />
-        <activity android:name=".controller.TematicaDetalles" />
         <activity android:name=".controller.TematicaAdd" />
-        <activity android:name=".controller.EventoDetalles" />
         <activity android:name=".controller.EventoAdd" />
         <activity android:name=".controller.CategoriaLista" />
         <activity android:name=".controller.ProductoLista" />

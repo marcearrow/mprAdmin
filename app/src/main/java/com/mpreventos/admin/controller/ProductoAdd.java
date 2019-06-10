@@ -4,33 +4,49 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.helper.StorageHelper;
 import com.mpreventos.admin.model.Producto;
+import com.mpreventos.admin.utils.Funciones;
+import com.mpreventos.admin.utils.Spinnerloaders;
 
 public class ProductoAdd extends AppCompatActivity {
 
+    private static final String LOADING_IMAGE_URL = "https://firebasestorage.googleapis.com/v0/b/mprfirebase-7753b.appspot.com/o/logo-mpr-decoracion.png?alt=media&token=49548e12-c035-4995-be4d-f38be90bbc06";
     private static final String PRODUCTOS_CHILD = "productos";
     private static final int REQUEST_IMAGE = 2;
-    private static final String LOADING_IMAGE_URL = "https://firebasestorage.googleapis.com/v0/b/mprfirebase-7753b.appspot.com/o/logo-mpr-decoracion.png?alt=media&token=49548e12-c035-4995-be4d-f38be90bbc06";
-    DatabaseReference mDataBase;
-    ImageView imagenProducto;
-    EditText nombreProducto;
-    EditText descripcionProducto;
-    FirebaseHelper firebaseHelper;
-    Producto temProducto;
-    Uri uri;
+    private DatabaseReference mDataBase;
+    private ImageView imagenProducto;
+    private EditText nombreProducto;
+    private EditText descripcionProducto;
+    private FirebaseHelper firebaseHelper;
+    private Producto producto;
+    private String imgUrl;
+    private String id;
+    private Button modButton;
+    private Boolean estado;
+    private Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +57,40 @@ public class ProductoAdd extends AppCompatActivity {
         nombreProducto = findViewById(R.id.editNombreProducto);
         descripcionProducto = findViewById(R.id.editDescripcionProducto);
         imagenProducto = findViewById(R.id.imageViewProducto);
+        modButton = findViewById(R.id.btAddProducto);
+        Spinner spinnerEvento = findViewById(R.id.spinnerProductoEvento);
+        Spinner spinnerTematica = findViewById(R.id.spinnerProductoTematica);
+        Spinner spinnerCategoria = findViewById(R.id.spinnerProductoCategoria);
 
+        if (getIntent() != null && getIntent().getExtras() != null) {
 
+            id = getIntent().getStringExtra("id");
+            setTitle("modificar producto");
+
+            modButton.setText(R.string.modificar);
+            mDataBase.child(id).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    nombreProducto.setText(dataSnapshot.child("nombre").getValue().toString());
+                    imgUrl = dataSnapshot.child("imgUrl").getValue().toString();
+                    descripcionProducto.setText(dataSnapshot.child("descripcion").getValue().toString());
+                    Funciones funciones = new Funciones();
+                    funciones.setImg(imgUrl, imagenProducto, getApplicationContext());
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        } else {
+            setTitle("Agregar producto");
+        }
+
+        Spinnerloaders spinnerloaders = new Spinnerloaders(this);
+        spinnerEvento.setAdapter(spinnerloaders.setSpinnerEventos());
+        spinnerTematica.setAdapter(spinnerloaders.setSpinnerTematicas());
+        spinnerCategoria.setAdapter(spinnerloaders.setSpinnerCategorias());
     }
 
     public void onClickAddProductos(View view) {
@@ -59,21 +107,50 @@ public class ProductoAdd extends AppCompatActivity {
                 break;
 
             case R.id.btAddProducto:
+
                 firebaseHelper = new FirebaseHelper(mDataBase);
-                final String id = firebaseHelper.getIdkey();
-                temProducto = new Producto(id, nombreProducto.getText().toString(), descripcionProducto.getText().toString(), LOADING_IMAGE_URL);
-                Boolean estado = firebaseHelper.guardarDatosFirebase(temProducto, id);
+                if (modButton.getText().toString().toLowerCase().equals("modificar")) {
+                    producto = new Producto(id, nombreProducto.getText().toString(), descripcionProducto.getText().toString(), imgUrl);
+
+                } else {
+                    id = firebaseHelper.getIdkey();
+                    producto = new Producto(id, nombreProducto.getText().toString(), descripcionProducto.getText().toString(), LOADING_IMAGE_URL);
+                }
+
+                estado = firebaseHelper.guardarDatosFirebase(producto, id);
 
 
                 if (estado && uri != null) {
-                    StorageReference storageReference = FirebaseStorage.getInstance().getReference(PRODUCTOS_CHILD).child(id);
+                    final StorageReference storageReference = FirebaseStorage.getInstance().getReference(PRODUCTOS_CHILD).child(producto.getId());
                     StorageHelper storageHelper = new StorageHelper(storageReference);
-                    //storageHelper.uploadImage(uri);
+                    UploadTask task = storageHelper.uploadImage(uri);
 
+                    Task<Uri> urlTask = task.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                        @Override
+                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                            if (!task.isSuccessful()) {
+                                throw task.getException();
+                            }// Continue with the task to get the download URL
+
+                            return storageReference.getDownloadUrl();
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()) {
+
+                                Uri downloadUri = task.getResult();
+                                producto = new Producto(id, nombreProducto.getText().toString(), descripcionProducto.getText().toString(), downloadUri.toString());
+                                firebaseHelper.guardarDatosFirebase(producto, producto.getId());
+
+                            }
+                            //TODO POR ERROR
+                        }
+                    });
+                    break;
                 }
-                break;
-        }
 
+        }
     }
 
     @Override

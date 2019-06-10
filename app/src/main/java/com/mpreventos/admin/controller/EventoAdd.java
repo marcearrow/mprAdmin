@@ -4,44 +4,82 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.helper.StorageHelper;
 import com.mpreventos.admin.model.Evento;
+import com.mpreventos.admin.utils.Funciones;
 
 public class EventoAdd extends AppCompatActivity {
 
-
+    private static final String LOADING_IMAGE_URL = "https://firebasestorage.googleapis.com/v0/b/mprfirebase-7753b.appspot.com/o/logo-mpr-decoracion.png?alt=media&token=49548e12-c035-4995-be4d-f38be90bbc06";
     private static final String EVENTOS_CHILD = "eventos";
     private static final int REQUEST_IMAGE = 2;
-    private static final String LOADING_IMAGE_URL = "https://firebasestorage.googleapis.com/v0/b/mprfirebase-7753b.appspot.com/o/logo-mpr-decoracion.png?alt=media&token=49548e12-c035-4995-be4d-f38be90bbc06";
-    DatabaseReference mDataBase;
-    ImageView imagenEvento;
-    EditText nombreEvento;
-    FirebaseHelper firebaseHelper;
-    Evento tempEvento;
-    Uri uri;
+    private DatabaseReference mDataBase;
+    private ImageView imagenEvento;
+    private EditText nombreEvento;
+    private FirebaseHelper firebaseHelper;
+    private Evento tempEvento;
+    private String imgUrl;
+    private String id;
+    private Button modButton;
+    private Boolean estado;
+    private Uri uri;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_evento_add);
-        setTitle("Agregar Evento");
 
         mDataBase = FirebaseDatabase.getInstance().getReference(EVENTOS_CHILD);
+
         nombreEvento = findViewById(R.id.editNombreEvento);
         imagenEvento = findViewById(R.id.imgEvento);
+        modButton = (Button) findViewById(R.id.btAddEvento);
+
+        if (getIntent() != null && getIntent().getExtras() != null) {
+
+            id = getIntent().getStringExtra("id");
+            setTitle("modificar evento");
+
+            modButton.setText(R.string.modificar);
+            mDataBase.child(id).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    nombreEvento.setText(dataSnapshot.child("nombre").getValue().toString());
+                    imgUrl = dataSnapshot.child("imgUrl").getValue().toString();
+                    Funciones funciones = new Funciones();
+                    funciones.setImg(imgUrl, imagenEvento, getApplicationContext());
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        } else {
+            setTitle("Agregar evento");
+        }
 
     }
 
@@ -59,25 +97,49 @@ public class EventoAdd extends AppCompatActivity {
 
                 break;
             case R.id.btAddEvento:
+
                 firebaseHelper = new FirebaseHelper(mDataBase);
-                final String id = firebaseHelper.getIdkey();
-                tempEvento = new Evento(id, nombreEvento.getText().toString(), LOADING_IMAGE_URL);
-                Boolean estado = firebaseHelper.guardarDatosFirebase(tempEvento, id);
+                if (modButton.getText().toString().toLowerCase().equals("modificar")) {
+                    tempEvento = new Evento(id, nombreEvento.getText().toString(), imgUrl);
 
-                if (estado && uri != null) {
-                    StorageReference storageReference = FirebaseStorage.getInstance().getReference(EVENTOS_CHILD).child(id);
-                    StorageHelper storageHelper = new StorageHelper(storageReference);
-                    //storageHelper.uploadImage(uri);
-
-                    //FALTA EL RETORNO
-                    // if (url !=null) {
-                    //    evento = new Evento(id, nombreEvento.getText().toString(), url);
-                    //    firebaseHelper.guardarDatosFirebase(evento, evento.getId());
-                    //}
-
+                } else {
+                    id = firebaseHelper.getIdkey();
+                    tempEvento = new Evento(id, nombreEvento.getText().toString(), LOADING_IMAGE_URL);
                 }
 
-                break;
+                estado = firebaseHelper.guardarDatosFirebase(tempEvento, id);
+
+
+                if (estado && uri != null) {
+                    final StorageReference storageReference = FirebaseStorage.getInstance().getReference(EVENTOS_CHILD).child(tempEvento.getId());
+                    StorageHelper storageHelper = new StorageHelper(storageReference);
+                    UploadTask task = storageHelper.uploadImage(uri);
+
+                    Task<Uri> urlTask = task.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                        @Override
+                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                            if (!task.isSuccessful()) {
+                                throw task.getException();
+                            }// Continue with the task to get the download URL
+
+                            return storageReference.getDownloadUrl();
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()) {
+
+                                Uri downloadUri = task.getResult();
+                                tempEvento = new Evento(id, nombreEvento.getText().toString(), downloadUri.toString());
+                                firebaseHelper.guardarDatosFirebase(tempEvento, tempEvento.getId());
+
+                            }
+                            //TODO POR ERROR
+                        }
+                    });
+
+                    break;
+                }
         }
     }
 

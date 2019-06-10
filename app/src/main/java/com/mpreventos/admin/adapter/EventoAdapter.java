@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mpreventos.admin.R;
-import com.mpreventos.admin.controller.EventoDetalles;
+import com.mpreventos.admin.controller.EventoAdd;
 import com.mpreventos.admin.model.Evento;
 import com.mpreventos.admin.utils.ImageLoader;
 
@@ -53,13 +53,13 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.viewHolder
                 imageLoader.setImgWithGlide(evento.getImgUrl(), holder.imageView);
             } catch (Exception ex) {
                 Toast.makeText(context, "Ocurrio un error", Toast.LENGTH_SHORT).show();
-                //holder.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.logompr));
+                holder.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.logompr));
             }
 
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), EventoDetalles.class);
+                    Intent intent = new Intent(v.getContext(), EventoAdd.class);
                     intent.putExtra("id", idevento);
                     v.getContext().startActivity(intent);
                 }

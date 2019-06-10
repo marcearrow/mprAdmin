@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mpreventos.admin.R;
-import com.mpreventos.admin.controller.TematicaDetalles;
+import com.mpreventos.admin.controller.TematicaAdd;
 import com.mpreventos.admin.model.Tematica;
 import com.mpreventos.admin.utils.ImageLoader;
 
@@ -59,7 +59,7 @@ public class TematicaAdapter extends RecyclerView.Adapter<TematicaAdapter.viewHo
             holder.cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), TematicaDetalles.class);
+                    Intent intent = new Intent(v.getContext(), TematicaAdd.class);
                     intent.putExtra("id", idTematica);
                     v.getContext().startActivity(intent);
                 }

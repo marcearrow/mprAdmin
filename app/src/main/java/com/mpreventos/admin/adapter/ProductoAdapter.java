@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mpreventos.admin.R;
-import com.mpreventos.admin.controller.ProductoDetalles;
+import com.mpreventos.admin.controller.ProductoAdd;
 import com.mpreventos.admin.model.Producto;
 import com.mpreventos.admin.utils.ImageLoader;
 
@@ -60,7 +60,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.viewHo
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), ProductoDetalles.class);
+                Intent intent = new Intent(v.getContext(), ProductoAdd.class);
                 intent.putExtra("id", idproducto);
                 v.getContext().startActivity(intent);
             }

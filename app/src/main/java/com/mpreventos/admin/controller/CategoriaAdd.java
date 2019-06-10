@@ -4,45 +4,91 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.helper.StorageHelper;
 import com.mpreventos.admin.model.Categoria;
+import com.mpreventos.admin.utils.Funciones;
+import com.mpreventos.admin.utils.Spinnerloaders;
 
 public class CategoriaAdd extends AppCompatActivity {
 
+    private static final String LOADING_IMAGE_URL = "https://firebasestorage.googleapis.com/v0/b/mprfirebase-7753b.appspot.com/o/logo-mpr-decoracion.png?alt=media&token=49548e12-c035-4995-be4d-f38be90bbc06";
     private static final String CATEGORIAS_CHILD = "categorias";
     private static final int REQUEST_IMAGE = 2;
-    private static final String LOADING_IMAGE_URL = "https://firebasestorage.googleapis.com/v0/b/mprfirebase-7753b.appspot.com/o/logo-mpr-decoracion.png?alt=media&token=49548e12-c035-4995-be4d-f38be90bbc06";
-    DatabaseReference mDataBase;
-    ImageView imagenCategoria;
-    EditText nombreCategoria;
-    EditText descripcionCategoria;
-    FirebaseHelper firebaseHelper;
-    Categoria tempCategoria;
-    Uri uri;
+    private DatabaseReference mDataBase;
+    private ImageView imagenCategoria;
+    private EditText nombreCategoria;
+    private EditText descripcionCategoria;
+    private FirebaseHelper firebaseHelper;
+    private Categoria categoria;
+    private String imgUrl;
+    private String id;
+    private Button modButton;
+    private Boolean estado;
+    private Uri uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_categoria_add);
 
-        setTitle(CATEGORIAS_CHILD);
         mDataBase = FirebaseDatabase.getInstance().getReference(CATEGORIAS_CHILD);
 
         nombreCategoria = findViewById(R.id.editNombreCategoria);
         descripcionCategoria = findViewById(R.id.editDescripcionCategoria);
         imagenCategoria = findViewById(R.id.imgCategoria);
+        modButton = findViewById(R.id.btAddCategoria);
+        Spinner spinnerEvento = findViewById(R.id.spinnerCategoriaEvento);
+        Spinner spinnerTematica = findViewById(R.id.spinnerCategoriaTematica);
+
+        if (getIntent() != null && getIntent().getExtras() != null) {
+
+            id = getIntent().getStringExtra("id");
+            setTitle("modificar categoria");
+
+            modButton.setText(R.string.modificar);
+            mDataBase.child(id).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    nombreCategoria.setText(dataSnapshot.child("nombre").getValue().toString());
+                    descripcionCategoria.setText(dataSnapshot.child("categoria").getValue().toString());
+                    imgUrl = dataSnapshot.child("imgUrl").getValue().toString();
+                    Funciones funciones = new Funciones();
+                    funciones.setImg(imgUrl, imagenCategoria, getApplicationContext());
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        } else {
+            setTitle("Agregar categoria");
+        }
+        Spinnerloaders spinnerloaders = new Spinnerloaders(this);
+        spinnerEvento.setAdapter(spinnerloaders.setSpinnerEventos());
+        spinnerTematica.setAdapter(spinnerloaders.setSpinnerTematicas());
     }
 
     public void onClickAddCategoria(View view) {
@@ -61,14 +107,44 @@ public class CategoriaAdd extends AppCompatActivity {
             case R.id.btAddCategoria:
 
                 firebaseHelper = new FirebaseHelper(mDataBase);
-                final String id = firebaseHelper.getIdkey();
-                tempCategoria = new Categoria(id, nombreCategoria.getText().toString(), descripcionCategoria.getText().toString(), LOADING_IMAGE_URL);
-                Boolean estado = firebaseHelper.guardarDatosFirebase(tempCategoria, id);
+                if (modButton.getText().toString().toLowerCase().equals("modificar")) {
+                    categoria = new Categoria(id, nombreCategoria.getText().toString(), descripcionCategoria.getText().toString(), imgUrl);
+
+                } else {
+                    id = firebaseHelper.getIdkey();
+                    categoria = new Categoria(id, nombreCategoria.getText().toString(), descripcionCategoria.getText().toString(), LOADING_IMAGE_URL);
+                }
+
+                estado = firebaseHelper.guardarDatosFirebase(categoria, id);
+
 
                 if (estado && uri != null) {
-                    StorageReference storageReference = FirebaseStorage.getInstance().getReference(CATEGORIAS_CHILD).child(id);
+                    final StorageReference storageReference = FirebaseStorage.getInstance().getReference(CATEGORIAS_CHILD).child(categoria.getId());
                     StorageHelper storageHelper = new StorageHelper(storageReference);
-                    //storageHelper.uploadImage(uri);
+                    UploadTask task = storageHelper.uploadImage(uri);
+
+                    Task<Uri> urlTask = task.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                        @Override
+                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                            if (!task.isSuccessful()) {
+                                throw task.getException();
+                            }// Continue with the task to get the download URL
+
+                            return storageReference.getDownloadUrl();
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()) {
+
+                                Uri downloadUri = task.getResult();
+                                categoria = new Categoria(id, nombreCategoria.getText().toString(), descripcionCategoria.getText().toString(), downloadUri.toString());
+                                firebaseHelper.guardarDatosFirebase(categoria, categoria.getId());
+
+                            }
+                            //TODO POR ERROR
+                        }
+                    });
                     break;
                 }
         }
