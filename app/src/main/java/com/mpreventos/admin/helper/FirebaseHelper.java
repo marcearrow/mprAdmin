@@ -1,5 +1,7 @@
 package com.mpreventos.admin.helper;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.google.firebase.database.DataSnapshot;
@@ -7,11 +9,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.mpreventos.admin.model.Categoria;
+import com.mpreventos.admin.model.Producto;
+import com.mpreventos.admin.model.Tematica;
 
 import java.util.ArrayList;
 
 public class FirebaseHelper {
 
+    private static final String TAG = "spinner";
     private DatabaseReference db;
     private Boolean estado;
 
@@ -67,17 +73,35 @@ public class FirebaseHelper {
         return estado;
     }
 
-    //Arraylist de los nombres de los eventos
-    public ArrayList<String> eventosNombre() {
-        final ArrayList<String> eventos = new ArrayList<>();
-        db.addValueEventListener(new ValueEventListener() {
+
+    public void eventosTematicas(Tematica tematca, String nombreEvento) {
+        db = db.getRoot();
+        db.child("eventoTematicas").child(nombreEvento).child(tematca.getId()).setValue(true);
+    }
+
+    public void TematicaCategora(Categoria categoria, String nombreCategoria) {
+        db = db.getRoot();
+        db.child("tematicaCategorias").child(nombreCategoria).child(categoria.getId()).setValue(true);
+    }
+
+    public void CategoriaProducto(Producto producto, String nombreProducto) {
+        db = db.getRoot();
+        db.child("categoriaProducto").child(nombreProducto).child(producto.getId()).setValue(true);
+    }
+
+    //PARA CONSEGUUIR LOS ELEMENTOS  AQUI DEBES EN VEZ DE AGREGARLO A UNA LISTA PASARLO A UN ADAPTER
+    public void EventosNombre(final FirebaseEventosCallback firebaseEventosCallback) {
+        final ArrayList<String> itemList = new ArrayList<>();
+        db.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                eventos.clear();
+
+                itemList.clear();
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     String nombre = ds.child("nombre").getValue().toString();
-                    eventos.add(nombre);
+                    itemList.add(nombre);
                 }
+                firebaseEventosCallback.onCallback(itemList);
             }
 
             @Override
@@ -85,53 +109,45 @@ public class FirebaseHelper {
 
             }
         });
-
-        return eventos;
     }
 
-    //Arraylist de los nombres de las Tematicas
-    public ArrayList<String> tematicasNombre() {
-        final ArrayList<String> tematicas = new ArrayList<>();
-        db.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                tematicas.clear();
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    String nombre = ds.child("nombre").getValue().toString();
-                    tematicas.add(nombre);
+    //DEBES UTIlizar el db.orederBychild("id").equealTo(st)
+    public void TematicasNombre(final FirebaseEventosCallback firebaseEventosCallback, ArrayList<String> lista) {
+        final ArrayList<String> itemList = new ArrayList<>();
+        itemList.clear();
+        for (String st :
+                lista) {
+            db.orderByChild("id").equalTo(st).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Log.d(TAG, "dentro de TEmaticas Nombre Segundo Snap " + dataSnapshot.toString());
+
+                    for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                        String nombre = ds.child("nombre").getValue().toString();
+                        itemList.add(nombre);
+                    }
+                    firebaseEventosCallback.onCallback(itemList);
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
-
-        return tematicas;
-    }
-
-
-    //Arraylist de los nombres de los eventos
-    public ArrayList<String> categoriaNombre() {
-        final ArrayList<String> categorias = new ArrayList<>();
-        db.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                categorias.clear();
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    String nombre = ds.child("nombre").getValue().toString();
-                    categorias.add(nombre);
                 }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
+            });
 
-        return categorias;
+
+        }
+
+
     }
+
+    public interface FirebaseEventosCallback {
+        void onCallback(ArrayList<String> lista);
+    }
+
+
+
 }
 

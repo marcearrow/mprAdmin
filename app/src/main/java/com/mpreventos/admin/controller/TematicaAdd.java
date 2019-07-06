@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -36,6 +38,8 @@ public class TematicaAdd extends AppCompatActivity {
     private static final String LOADING_IMAGE_URL = "https://firebasestorage.googleapis.com/v0/b/mprfirebase-7753b.appspot.com/o/logo-mpr-decoracion.png?alt=media&token=49548e12-c035-4995-be4d-f38be90bbc06";
     private static final String TEMATICAS_CHILD = "tematicas";
     private static final int REQUEST_IMAGE = 2;
+    private static final String LOG = "tematicaSpinner";
+    private static final String TAG = "spinner1";
     private Uri uri;
     private DatabaseReference mDataBase;
     private ImageView imagenTematica;
@@ -47,6 +51,8 @@ public class TematicaAdd extends AppCompatActivity {
     private Button modButton;
     private Boolean estado;
     private Spinner spinner;
+    String selected_item;
+    String nombre;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,11 +85,36 @@ public class TematicaAdd extends AppCompatActivity {
 
                 }
             });
+
         } else {
             setTitle("Agregar Tematica");
         }
-        Spinnerloaders spinnerloaders = new Spinnerloaders(this);
-        spinner.setAdapter(spinnerloaders.setSpinnerEventos());
+        final Spinnerloaders spinnerloaders = new Spinnerloaders(getBaseContext());
+        spinnerloaders.adapterEventos(new Spinnerloaders.SpinnerAdaperCallbackEventos() {
+            @Override
+            public void callbackEventos(ArrayAdapter<String> adapter) {
+                spinner.setAdapter(adapter);
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        String item = parent.getItemAtPosition(position).toString();
+                        getItemName(item);
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+            }
+
+        });
+
+    }
+
+    private void getItemName(String item) {
+        nombre = item;
     }
 
     public void onClickAddTematica(View view) {
@@ -109,6 +140,8 @@ public class TematicaAdd extends AppCompatActivity {
                 }
 
                 estado = firebaseHelper.guardarDatosFirebase(tematica, id);
+                firebaseHelper.eventosTematicas(tematica, nombre);
+
 
                 if (estado && uri != null) {
                     final StorageReference storageReference = FirebaseStorage.getInstance().getReference(TEMATICAS_CHILD).child(tematica.getId());

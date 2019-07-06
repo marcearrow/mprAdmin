@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -47,6 +49,7 @@ public class ProductoAdd extends AppCompatActivity {
     private Button modButton;
     private Boolean estado;
     private Uri uri;
+    private String nombre;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +61,9 @@ public class ProductoAdd extends AppCompatActivity {
         descripcionProducto = findViewById(R.id.editDescripcionProducto);
         imagenProducto = findViewById(R.id.imageViewProducto);
         modButton = findViewById(R.id.btAddProducto);
-        Spinner spinnerEvento = findViewById(R.id.spinnerProductoEvento);
-        Spinner spinnerTematica = findViewById(R.id.spinnerProductoTematica);
-        Spinner spinnerCategoria = findViewById(R.id.spinnerProductoCategoria);
+        final Spinner spinnerEvento = findViewById(R.id.spinnerProductoEvento);
+        final Spinner spinnerTematica = findViewById(R.id.spinnerProductoTematica);
+        final Spinner spinnerCategoria = findViewById(R.id.spinnerProductoCategoria);
 
         if (getIntent() != null && getIntent().getExtras() != null) {
 
@@ -87,11 +90,62 @@ public class ProductoAdd extends AppCompatActivity {
             setTitle("Agregar producto");
         }
 
-        Spinnerloaders spinnerloaders = new Spinnerloaders(this);
-        spinnerEvento.setAdapter(spinnerloaders.setSpinnerEventos());
-        spinnerTematica.setAdapter(spinnerloaders.setSpinnerTematicas());
-        spinnerCategoria.setAdapter(spinnerloaders.setSpinnerCategorias());
+        final Spinnerloaders spinnerloaders = new Spinnerloaders(this);
+        spinnerloaders.adapterEventos(new Spinnerloaders.SpinnerAdaperCallbackEventos() {
+            @Override
+            public void callbackEventos(ArrayAdapter<String> adapter) {
+                spinnerEvento.setAdapter(adapter);
+                spinnerEvento.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        String item = parent.getItemAtPosition(position).toString();
+                        getItemName(item);
+
+                        spinnerloaders.adapterTematicas(new Spinnerloaders.SpinnerAdapterCallbackTematicas() {
+                            @Override
+                            public void callbackTematicas(ArrayAdapter<String> adapter2) {
+                                spinnerTematica.setAdapter(adapter2);
+                            }
+                        }, nombre);
+
+                        spinnerTematica.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                String item = parent.getItemAtPosition(position).toString();
+                                getItemName(item);
+
+                                spinnerloaders.adapterCategorias(new Spinnerloaders.SpinnerAdapterCallbackCategorias() {
+                                    @Override
+                                    public void callbackCategorias(ArrayAdapter<String> adapter) {
+                                        spinnerCategoria.setAdapter(adapter);
+                                    }
+                                }, nombre);
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+
+                            }
+                        });
+
+                    }
+
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+            }
+        });
+
+
     }
+
+    private void getItemName(String item) {
+        nombre = item;
+    }
+
 
     public void onClickAddProductos(View view) {
         switch (view.getId()) {
@@ -118,6 +172,7 @@ public class ProductoAdd extends AppCompatActivity {
                 }
 
                 estado = firebaseHelper.guardarDatosFirebase(producto, id);
+                firebaseHelper.CategoriaProducto(producto, nombre);
 
 
                 if (estado && uri != null) {

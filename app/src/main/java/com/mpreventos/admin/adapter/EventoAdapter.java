@@ -1,5 +1,6 @@
 package com.mpreventos.admin.adapter;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -64,6 +65,14 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.viewHolder
                     v.getContext().startActivity(intent);
                 }
             });
+
+            holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    //Dialog();
+                    return false;
+                }
+            });
         }
     }
 
@@ -86,5 +95,12 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.viewHolder
             this.cardView = itemView.findViewById(R.id.cardEvent);
 
         }
+    }
+
+    public void Dialog() {
+
+        AlertDialog.Builder dialogAlert = new AlertDialog.Builder(context);
+        dialogAlert.setTitle("Demo ?");
+        dialogAlert.show();
     }
 }

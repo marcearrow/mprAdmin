@@ -3,7 +3,10 @@ package com.mpreventos.admin.controller;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -36,6 +39,7 @@ public class CategoriaAdd extends AppCompatActivity {
     private static final String LOADING_IMAGE_URL = "https://firebasestorage.googleapis.com/v0/b/mprfirebase-7753b.appspot.com/o/logo-mpr-decoracion.png?alt=media&token=49548e12-c035-4995-be4d-f38be90bbc06";
     private static final String CATEGORIAS_CHILD = "categorias";
     private static final int REQUEST_IMAGE = 2;
+    private static final String TAG = "spinner";
     private DatabaseReference mDataBase;
     private ImageView imagenCategoria;
     private EditText nombreCategoria;
@@ -47,6 +51,7 @@ public class CategoriaAdd extends AppCompatActivity {
     private Button modButton;
     private Boolean estado;
     private Uri uri;
+    private String nombre;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +64,8 @@ public class CategoriaAdd extends AppCompatActivity {
         descripcionCategoria = findViewById(R.id.editDescripcionCategoria);
         imagenCategoria = findViewById(R.id.imgCategoria);
         modButton = findViewById(R.id.btAddCategoria);
-        Spinner spinnerEvento = findViewById(R.id.spinnerCategoriaEvento);
-        Spinner spinnerTematica = findViewById(R.id.spinnerCategoriaTematica);
+        final Spinner spinnerEvento = findViewById(R.id.spinnerCategoriaEvento);
+        final Spinner spinnerTematica = findViewById(R.id.spinnerCategoriaTematica);
 
         if (getIntent() != null && getIntent().getExtras() != null) {
 
@@ -86,9 +91,54 @@ public class CategoriaAdd extends AppCompatActivity {
         } else {
             setTitle("Agregar categoria");
         }
-        Spinnerloaders spinnerloaders = new Spinnerloaders(this);
-        spinnerEvento.setAdapter(spinnerloaders.setSpinnerEventos());
-        spinnerTematica.setAdapter(spinnerloaders.setSpinnerTematicas());
+        final Spinnerloaders spinnerloaders = new Spinnerloaders(getBaseContext());
+        spinnerloaders.adapterEventos(new Spinnerloaders.SpinnerAdaperCallbackEventos() {
+            @Override
+            public void callbackEventos(ArrayAdapter<String> adapter) {
+                spinnerEvento.setAdapter(adapter);
+                spinnerEvento.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        String item = parent.getItemAtPosition(position).toString();
+                        getItemName(item);
+
+                        spinnerloaders.adapterTematicas(new Spinnerloaders.SpinnerAdapterCallbackTematicas() {
+                            @Override
+                            public void callbackTematicas(ArrayAdapter<String> adapter2) {
+
+                                spinnerTematica.setAdapter(adapter2);
+                                Log.d(TAG, "final del callback en categoria add ");
+                            }
+                        }, nombre);
+
+                        spinnerTematica.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                String item = parent.getItemAtPosition(position).toString();
+                                getItemName(item);
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+
+                            }
+                        });
+
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
+            }
+
+        });
+
+    }
+
+    private void getItemName(String item) {
+        nombre = item;
     }
 
     public void onClickAddCategoria(View view) {
@@ -116,7 +166,7 @@ public class CategoriaAdd extends AppCompatActivity {
                 }
 
                 estado = firebaseHelper.guardarDatosFirebase(categoria, id);
-
+                firebaseHelper.TematicaCategora(categoria, nombre);
 
                 if (estado && uri != null) {
                     final StorageReference storageReference = FirebaseStorage.getInstance().getReference(CATEGORIAS_CHILD).child(categoria.getId());
