@@ -166,7 +166,7 @@ public class CategoriaAdd extends AppCompatActivity {
                 }
 
                 estado = firebaseHelper.guardarDatosFirebase(categoria, id);
-                firebaseHelper.TematicaCategora(categoria, nombre);
+
 
                 if (estado && uri != null) {
                     final StorageReference storageReference = FirebaseStorage.getInstance().getReference(CATEGORIAS_CHILD).child(categoria.getId());
@@ -197,6 +197,7 @@ public class CategoriaAdd extends AppCompatActivity {
                     });
                     break;
                 }
+                firebaseHelper.TematicaCategora(categoria, nombre);
         }
     }
 

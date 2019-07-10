@@ -154,6 +154,7 @@ public class EventoAdd extends AppCompatActivity {
                 Toast.makeText(this, "Evento agregado", Toast.LENGTH_LONG).show();
                 finish();
 
+                //TODO: REVISAR TEMATICAS CON LA IMAGEN Y LA RELACION EN DATABASE
         }
     }
 

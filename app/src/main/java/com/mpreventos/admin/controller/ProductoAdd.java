@@ -172,7 +172,7 @@ public class ProductoAdd extends AppCompatActivity {
                 }
 
                 estado = firebaseHelper.guardarDatosFirebase(producto, id);
-                firebaseHelper.CategoriaProducto(producto, nombre);
+
 
 
                 if (estado && uri != null) {
@@ -204,6 +204,7 @@ public class ProductoAdd extends AppCompatActivity {
                     });
                     break;
                 }
+                firebaseHelper.CategoriaProducto(producto, nombre);
 
         }
     }

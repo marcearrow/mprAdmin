@@ -140,7 +140,6 @@ public class TematicaAdd extends AppCompatActivity {
                 }
 
                 estado = firebaseHelper.guardarDatosFirebase(tematica, id);
-                firebaseHelper.eventosTematicas(tematica, nombre);
 
 
                 if (estado && uri != null) {
@@ -174,6 +173,7 @@ public class TematicaAdd extends AppCompatActivity {
 
                     break;
                 }
+                firebaseHelper.eventosTematicas(tematica, nombre);
         }
     }
 
