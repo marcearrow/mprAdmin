@@ -151,6 +151,9 @@ public class EventoAdd extends AppCompatActivity {
                 } else {
                     DismmisDialog();
                 }
+                Toast.makeText(this, "Evento agregado", Toast.LENGTH_LONG).show();
+                finish();
+
         }
     }
 
