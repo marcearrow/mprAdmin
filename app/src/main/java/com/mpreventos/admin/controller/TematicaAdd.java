@@ -1,5 +1,6 @@
 package com.mpreventos.admin.controller;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -53,6 +54,8 @@ public class TematicaAdd extends AppCompatActivity {
     private Spinner spinner;
     String selected_item;
     String nombre;
+    Dialog dialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -190,6 +193,25 @@ public class TematicaAdd extends AppCompatActivity {
             }
 
         } else Toast.makeText(this, "La imagen no se pudo cargar", Toast.LENGTH_LONG).show();
+    }
+
+
+    private void ShowDialog() {
+        if (dialog != null) {
+            dialog.show();
+        }
+    }
+
+    private void DismmisDialog() {
+        if (dialog != null) {
+            dialog.dismiss();
+        }
+    }
+
+    private void CreateDialog() {
+        dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog);
+        dialog.setCancelable(false);
     }
 
 
