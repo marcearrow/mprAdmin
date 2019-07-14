@@ -1,21 +1,36 @@
-package com.bumptech.glide.manager;
+package com.mpreventos.admin.utils;
 
-import java.util.Collections;
-import java.util.Set;
-import java.util.WeakHashMap;
 
-/**
- * A {@link com.bumptech.glide.manager.Lifecycle} implementation for tracking and notifying
- * listeners of {@link android.app.Fragment} and {@link android.app.Activity} lifecycle events.
- */
-class ActivityFragmentLifecycle implements Lifecycle {
+import android.app.Dialog;
+import android.content.Context;
+import com.mpreventos.admin.R;
 
-  private final Set<LifecycleListener> lifecycleListeners =
-      Collections.newSetFromMap(new WeakHashMap<LifecycleListener, Boolean>());
-  private boolean isStarted;
-  private boolean isDestroyed;
+public class DialogLoader {
 
-/**
- * Adds the given listener to the list of listeners to be notified on each lifecycle event.
- *
- * <p> The latest lifecycle event will
+  Dialog dialog;
+  Context context;
+
+  public DialogLoader(Context context) {
+    this.context = context;
+  }
+
+  public void CreateDialog() {
+    dialog = new Dialog(context);
+    dialog.setContentView(R.layout.dialog);
+    dialog.setCancelable(false);
+
+  }
+
+  public void ShowDialog() {
+    if (dialog != null) {
+      dialog.show();
+    }
+
+  }
+
+  public void DismisDialog() {
+    if (dialog != null) {
+      dialog.dismiss();
+    }
+  }
+}

@@ -166,7 +166,7 @@ public class EventoAdd extends AppCompatActivity {
 
   private void ErrorMensaje() {
     Toast.makeText(this, "Ocurrio un error", Toast.LENGTH_SHORT).show();
-    dialogLoader.DismmisDialog();
+    dialogLoader.DismisDialog();
   }
 
 

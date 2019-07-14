@@ -28,7 +28,7 @@ public class Spinnerloaders {
     helperEventos.EventosNombre(new FirebaseHelper.FirebaseEventosCallback() {
       @Override
       public void onCallback(ArrayList<String> lista) {
-        adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, lista);
+        adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_activated_1, lista);
         spinnerAdaperCallbackEventos.callbackEventos(adapter);
       }
     });
@@ -61,7 +61,8 @@ public class Spinnerloaders {
             firebaseHelperTematicas.TematicasNombre(new FirebaseHelper.FirebaseEventosCallback() {
               @Override
               public void onCallback(ArrayList<String> lista) {
-                adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, lista);
+                adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_activated_1,
+                    lista);
                 spinnerAdapterCallbackTematicas.callbackTematicas(adapter);
               }
             }, lista);
@@ -69,7 +70,8 @@ public class Spinnerloaders {
         } else {
 
           lista.add(0, "No se encontró ninguna temática");
-          adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, lista);
+          adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_activated_1,
+              lista);
           spinnerAdapterCallbackTematicas.callbackTematicas(adapter);
         }
 
@@ -108,14 +110,16 @@ public class Spinnerloaders {
             firebaseHelperCategorias.TematicasNombre(new FirebaseHelper.FirebaseEventosCallback() {
               @Override
               public void onCallback(ArrayList<String> lista) {
-                adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, lista);
+                adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_activated_1,
+                    lista);
                 spinnerAdapterCallbackCategorias.callbackCategorias(adapter);
               }
             }, lista);
           }
         } else {
           lista.add(0, "No se encontró ninguna categoría");
-          adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, lista);
+          adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_activated_1,
+              lista);
           spinnerAdapterCallbackCategorias.callbackCategorias(adapter);
         }
       }

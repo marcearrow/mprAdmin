@@ -1,44 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:layout_margin="@dimen/activity_vertical_margin">
+
+  <com.google.android.material.card.MaterialCardView
+    android:id="@+id/cardCategoria"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/activity_vertical_margin">
+    android:elevation="@dimen/dimen_margin8">
 
-    <com.google.android.material.card.MaterialCardView
+    <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+
+      <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/cardImagenCategoria"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="false"
+        android:nestedScrollingEnabled="false"
+        android:scaleType="fitXY"/>
+
+      <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/cardCategoria">
+        android:layout_marginTop="170dp"
+        android:background="#99000000"
+        android:orientation="vertical"
+        >
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/cardTextNameCategoria"
+          style="@style/TextAppearance.MaterialComponents.Headline5"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="@dimen/activity_horizontal_margin"
+          android:text="@string/nombre"
+          android:textColor="@color/color_blanco"/>
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/cardImagenCategoria"
-                android:layout_width="match_parent"
-                android:layout_height="140dp" />
+        <androidx.appcompat.widget.AppCompatTextView
+          android:id="@+id/cardDescripcionCategoria"
+          style="@style/TextAppearance.MaterialComponents.Caption"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="@dimen/dimen_margin8"
+          android:layout_marginBottom="@dimen/activity_horizontal_margin"
+          android:layout_marginStart="@dimen/activity_horizontal_margin"
+          android:text="@string/descripcion"
+          android:textColor="@color/color_blanco"/>
 
-            <androidx.appcompat.widget.AppCompatTextView
-                style="@style/TextAppearance.MaterialComponents.Headline5"
-                android:id="@+id/cardTextNameCategoria"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="156dp"
-                android:text="@string/nombre" />
+      </LinearLayout>
 
-            <androidx.appcompat.widget.AppCompatTextView
-                style="@style/TextAppearance.MaterialComponents.Caption"
-                android:id="@+id/cardDescripcionCategoria"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="200dp"
-                android:text="@string/descripcion"
-                android:layout_marginBottom="@dimen/activity_vertical_margin" />
+    </FrameLayout>
 
-        </FrameLayout>
-
-    </com.google.android.material.card.MaterialCardView>
+  </com.google.android.material.card.MaterialCardView>
 
 </LinearLayout>

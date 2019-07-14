@@ -44,7 +44,7 @@
     style="@style/TextAppearance.MaterialComponents.Body1"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="@string/seleccionar_evento"
+    android:text="@string/eventos"
     android:layout_margin="@dimen/activity_horizontal_margin"/>
 
   <androidx.appcompat.widget.AppCompatSpinner

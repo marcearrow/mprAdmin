@@ -1,9 +1,6 @@
 package com.mpreventos.admin.controller;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -102,14 +99,6 @@ public class EventoLista extends AppCompatActivity {
 
                 }
             });
-            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(
-                Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-
-            if (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()) {
-                loader.setVisibility(View.VISIBLE);
-
-            }
 
         } catch (Exception ex) {
             Log.d(TAG, "error");
