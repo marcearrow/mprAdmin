@@ -3,7 +3,7 @@
     <string name="sign_out">Cerrar sesión</string>
     <string name="eventos">Eventos</string>
     <string name="tematicas">Temáticas</string>
-    <string name="categorias">Categorias</string>
+    <string name="categorias">Categorías</string>
     <string name="productos">Productos</string>
     <string name="email">Email:</string>
     <string name="contraseña">Contraseña:</string>
@@ -26,7 +26,8 @@
     <string name="descripcion">descripción</string>
     <string name="accesibility_categoria">Imagen que representa a una categoría</string>
     <string name="nombre_categoria">Nombre categoría:</string>
-    <string name="descripcion_categoria">Descripcion categoría:</string>
+    <string name="descripcion_categoria">Descripción categoría:</string>
     <string name="nombre_producto">Nombre producto:</string>
     <string name="descripcion_producto">Descripción producto:</string>
+    <string name="seleccionar_evento">Seleccionar evento:</string>
 </resources>

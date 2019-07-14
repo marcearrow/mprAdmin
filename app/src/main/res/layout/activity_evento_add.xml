@@ -3,35 +3,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     tools:context=".controller.EventoAdd">
 
     <ImageView
         android:id="@+id/imgEvento"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:contentDescription="@string/accesibility_event" />
+      android:layout_height="240dp"
+      android:adjustViewBounds="false"
+      android:nestedScrollingEnabled="false"
+      android:scaleType="fitXY"
+      android:contentDescription="@string/accesibility_event"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btSelectImagen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/seleccionar_imagen"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:onClick="onClickAddEvento" />
+      android:layout_margin="@dimen/activity_horizontal_margin"
+      android:onClick="onClickAddEvento"
+      />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/nombre_evento"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        style="@style/TextAppearance.MaterialComponents.Body1" />
+      android:layout_marginStart="@dimen/activity_horizontal_margin"
+      android:layout_marginEnd="@dimen/activity_horizontal_margin"
+      android:layout_marginTop="@dimen/activity_horizontal_margin"
+      style="@style/TextAppearance.MaterialComponents.Body1"/>
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/editNombreEvento"
         android:layout_width="match_parent"
+      android:layout_margin="@dimen/activity_horizontal_margin"
         android:layout_height="40dp" />
     x
     <LinearLayout

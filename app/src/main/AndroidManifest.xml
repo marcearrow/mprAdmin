@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
     package="com.mpreventos.admin">
 
     <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -10,8 +12,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".controller.ProductoAdd" />
+      android:theme="@style/AppTheme"
+      tools:ignore="GoogleAppIndexingWarning">
+
+      <activity android:name=".controller.ProductoAdd"/>
         <activity android:name=".controller.CategoriaAdd" />
         <activity android:name=".controller.TematicaAdd" />
         <activity android:name=".controller.EventoAdd" />
@@ -20,10 +24,10 @@
         <activity android:name=".controller.EventoLista" />
         <activity android:name=".controller.TematicaLista" />
         <activity android:name=".controller.SignInActivity" />
-        <activity android:name=".controller.MainActivity">
+
+      <activity android:name=".controller.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

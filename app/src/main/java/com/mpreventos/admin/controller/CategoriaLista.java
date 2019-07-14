@@ -3,12 +3,11 @@ package com.mpreventos.admin.controller;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-
+import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,7 +18,6 @@ import com.mpreventos.admin.R;
 import com.mpreventos.admin.adapter.CategoriaAdapter;
 import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.model.Categoria;
-
 import java.util.ArrayList;
 
 public class CategoriaLista extends AppCompatActivity {
@@ -31,15 +29,18 @@ public class CategoriaLista extends AppCompatActivity {
     private FloatingActionButton fab;
     private CategoriaAdapter categoriaAdapter;
     private ArrayList<Categoria> categoriaLista = new ArrayList<>();
+    ProgressBar loader;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_categoria_lista);
-        setTitle(CATEGORIA_CHILD);
+        setTitle("Categorías");
         db = FirebaseDatabase.getInstance().getReference();
 
-
+        loader = findViewById(R.id.progressBar3);
         recyclerView = findViewById(R.id.recyclerCategoria);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -74,6 +75,9 @@ public class CategoriaLista extends AppCompatActivity {
                             categoriaAdapter = new CategoriaAdapter(R.layout.itemlist_categoria, categoriaLista, getApplicationContext());
                             recyclerView.setAdapter(categoriaAdapter);
                         }
+                    }
+                    if (recyclerView.getAdapter() != null) {
+                        loader.setVisibility(View.GONE);
                     }
                 }
 

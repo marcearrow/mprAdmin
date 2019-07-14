@@ -3,12 +3,11 @@ package com.mpreventos.admin.controller;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-
+import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -20,7 +19,6 @@ import com.mpreventos.admin.adapter.ProductoAdapter;
 import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.model.Producto;
 import com.mpreventos.admin.utils.Funciones;
-
 import java.util.ArrayList;
 
 public class ProductoLista extends AppCompatActivity {
@@ -32,13 +30,14 @@ public class ProductoLista extends AppCompatActivity {
     private FloatingActionButton fab;
     private ProductoAdapter productoAdapter;
     private ArrayList<Producto> productoLista = new ArrayList<>();
-
+    ProgressBar loader;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_producto_lista);
 
-        setTitle(PRODUCTO_CHILD);
+        loader = findViewById(R.id.progressBar4);
+        setTitle("Productos");
         db = FirebaseDatabase.getInstance().getReference();
 
         recyclerView = findViewById(R.id.recyclerProducto);
@@ -78,6 +77,9 @@ public class ProductoLista extends AppCompatActivity {
                             productoAdapter = new ProductoAdapter(R.layout.itemlist_producto, productoLista, getApplicationContext());
                             recyclerView.setAdapter(productoAdapter);
                         }
+                    }
+                    if (recyclerView.getAdapter() != null) {
+                        loader.setVisibility(View.GONE);
                     }
                 }
 

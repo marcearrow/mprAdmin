@@ -3,12 +3,11 @@ package com.mpreventos.admin.controller;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-
+import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,7 +18,6 @@ import com.mpreventos.admin.R;
 import com.mpreventos.admin.adapter.TematicaAdapter;
 import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.model.Tematica;
-
 import java.util.ArrayList;
 
 public class TematicaLista extends AppCompatActivity {
@@ -29,6 +27,7 @@ public class TematicaLista extends AppCompatActivity {
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
     private TematicaAdapter tematicaAdapter;
+    ProgressBar loader;
 
     private ArrayList<Tematica> tematicaLista = new ArrayList<>();
 
@@ -36,8 +35,10 @@ public class TematicaLista extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tematica_lista);
-        setTitle(TEMATICA_CHILD);
+        setTitle("Temáticas");
         db = FirebaseDatabase.getInstance().getReference();
+
+        loader = findViewById(R.id.progressBar2);
 
         recyclerView = findViewById(R.id.recyclerTematica);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
@@ -74,6 +75,9 @@ public class TematicaLista extends AppCompatActivity {
                             tematicaAdapter = new TematicaAdapter(R.layout.itemlist_tematica, tematicaLista, getApplicationContext());
                             recyclerView.setAdapter(tematicaAdapter);
                         }
+                    }
+                    if (recyclerView.getAdapter() != null) {
+                        loader.setVisibility(View.GONE);
                     }
                 }
 

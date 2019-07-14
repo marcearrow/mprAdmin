@@ -1,74 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".controller.TematicaAdd">
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical"
+  tools:context=".controller.TematicaAdd">
 
-    <ImageView
-        android:id="@+id/imgTematica"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:contentDescription="@string/accesibility_tematica" />
+  <ImageView
+    android:id="@+id/imgTematica"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:adjustViewBounds="false"
+    android:contentDescription="@string/accesibility_tematica"
+    android:nestedScrollingEnabled="false"
+    android:scaleType="fitXY"/>
+
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/btSelectImagenTematica"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/activity_vertical_margin"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
+    android:onClick="onClickAddTematica"
+    android:text="@string/seleccionar_imagen"/>
+
+  <androidx.appcompat.widget.AppCompatTextView
+    style="@style/TextAppearance.MaterialComponents.Body1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:layout_marginLeft="@dimen/activity_vertical_margin"
+    android:layout_marginRight="@dimen/activity_vertical_margin"
+    android:text="@string/nombre_tematica"/>
+
+
+  <com.google.android.material.textfield.TextInputEditText
+    android:id="@+id/editNombreTematica"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:layout_margin="@dimen/activity_vertical_margin"/>
+
+  <androidx.appcompat.widget.AppCompatTextView
+    style="@style/TextAppearance.MaterialComponents.Body1"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/seleccionar_evento"
+    android:layout_margin="@dimen/activity_horizontal_margin"/>
+
+  <androidx.appcompat.widget.AppCompatSpinner
+    android:id="@+id/spinnerTematicaEvento"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    />
+
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/activity_vertical_margin"
+    android:gravity="center_horizontal">
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btSelectImagenTematica"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_margin="@dimen/activity_vertical_margin"
-        android:onClick="onClickAddTematica"
-        android:text="@string/seleccionar_imagen" />
+      android:id="@+id/btCancelarTematica"
+      style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="@dimen/activity_vertical_margin"
+      android:onClick="onClickAddTematica"
+      android:text="@string/cancelar"
+      android:textColor="@color/colorPrimaryDark"/>
 
-    <androidx.appcompat.widget.AppCompatTextView
-        style="@style/TextAppearance.MaterialComponents.Body1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/activity_vertical_margin"
-        android:layout_marginLeft="@dimen/activity_vertical_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="@string/nombre_tematica" />
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/btAddTematica"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="@dimen/activity_vertical_margin"
+      android:onClick="onClickAddTematica"
+      android:text="@string/agregar"/>
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/editNombreTematica"
-        android:layout_width="match_parent"
-        android:layout_margin="@dimen/activity_vertical_margin"
-        android:layout_height="40dp" />
-
-    <androidx.appcompat.widget.AppCompatSpinner
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/activity_vertical_margin"
-        android:id="@+id/spinnerTematicaEvento">
-
-
-    </androidx.appcompat.widget.AppCompatSpinner>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/activity_vertical_margin"
-        android:gravity="center_horizontal">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btCancelarTematica"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_vertical_margin"
-            android:onClick="onClickAddTematica"
-            android:text="@string/cancelar"
-            android:textColor="@color/colorPrimaryDark" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btAddTematica"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_vertical_margin"
-            android:onClick="onClickAddTematica"
-            android:text="@string/agregar" />
-
-    </LinearLayout>
+  </LinearLayout>
 
 </LinearLayout>

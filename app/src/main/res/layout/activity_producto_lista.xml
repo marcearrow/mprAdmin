@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".controller.ProductoLista"
-    android:layout_margin="@dimen/activity_vertical_margin">
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  tools:context=".controller.ProductoLista"
+  android:layout_margin="@dimen/activity_vertical_margin">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerProducto"
@@ -18,7 +19,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:src="@drawable/ic_add_white_36dp" />
+      android:src="@drawable/ic_add_white_36dp"
+      style="@style/Widget.MaterialComponents.FloatingActionButton"
+      app:tint="@color/color_blanco"/>
 
-
+    <ProgressBar
+      android:id="@+id/progressBar4"
+      style="?android:attr/progressBarStyle"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      />
 </FrameLayout>
