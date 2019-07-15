@@ -49,8 +49,8 @@ public class ProductoLista extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: HACER ACTIVITY DETALLES
-                Intent intent = new Intent(v.getContext(), ProductoAdd.class);
+
+              Intent intent = new Intent(v.getContext(), ProductoAdd.class);
                 startActivity(intent);
             }
         });

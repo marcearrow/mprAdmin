@@ -28,6 +28,8 @@ import com.mpreventos.admin.R;
 import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.helper.StorageHelper;
 import com.mpreventos.admin.model.Categoria;
+import com.mpreventos.admin.model.Evento;
+import com.mpreventos.admin.model.Tematica;
 import com.mpreventos.admin.utils.DialogAlertSpinner;
 import com.mpreventos.admin.utils.DialogLoader;
 import com.mpreventos.admin.utils.Funciones;
@@ -96,38 +98,51 @@ public class CategoriaAdd extends AppCompatActivity {
     final Spinnerloaders spinnerloaders = new Spinnerloaders(getBaseContext());
     spinnerloaders.adapterEventos(new Spinnerloaders.SpinnerAdaperCallbackEventos() {
       @Override
-      public void callbackEventos(final ArrayAdapter<String> adapter) {
+      public void callbackEventos(final ArrayAdapter<String> adapter,
+          final ArrayList<Evento> listaEventos) {
         spinnerEvento.setAdapter(adapter);
 
         spinnerEvento.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
           @Override
           public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             String item = parent.getItemAtPosition(position).toString();
-            getItemName(item);
-            spinnerTematica.setAdapter(null);
-            if (!nombre.equals("Seleccione una opción...")) {
+            if (!item.equals("Seleccione una opción...")) {
+              spinnerTematica.setAdapter(null);
+              if (listaEventos.get(position - 1).getNombre().equals(item)) {
+                getItemName(listaEventos.get(position - 1).getId());
 
-              spinnerloaders.adapterTematicas(new Spinnerloaders.SpinnerAdapterCallbackTematicas() {
-                @Override
-                public void callbackTematicas(ArrayAdapter<String> adapter2) {
+                spinnerloaders
+                    .adapterTematicas(new Spinnerloaders.SpinnerAdapterCallbackTematicas() {
 
-                  spinnerTematica.setAdapter(adapter2);
-                }
-              }, nombre);
+                      @Override
+                      public void callbackTematicas(ArrayAdapter<String> adapter2,
+                          final ArrayList<Tematica> listaTematicas) {
+                        spinnerTematica.setAdapter(adapter2);
 
-              spinnerTematica.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view, int position,
-                    long id) {
-                  String item = parent.getItemAtPosition(position).toString();
-                  getItemName(item);
-                }
+                        spinnerTematica
+                            .setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                              @Override
+                              public void onItemSelected(AdapterView<?> parent, View view,
+                                  int position,
+                                  long id) {
+                                String item = parent.getItemAtPosition(position).toString();
+                                if (!item.equals("Seleccione una opción...")) {
+                                  if (listaTematicas.get(position).getNombre().equals(item)) {
+                                    getItemName(listaTematicas.get(position).getId());
+                                  }
+                                }
+                              }
 
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
+                              @Override
+                              public void onNothingSelected(AdapterView<?> parent) {
 
-                }
-              });
+                              }
+                            });
+                      }
+                    }, nombre);
+
+
+              }
             } else {
               ArrayList<String> lista = new ArrayList<>();
               lista.add("Seleccione una opción...");
@@ -135,6 +150,7 @@ public class CategoriaAdd extends AppCompatActivity {
                   android.R.layout.simple_list_item_1, lista);
               spinnerTematica.setAdapter(adapter);
             }
+
 
           }
 
@@ -279,7 +295,9 @@ public class CategoriaAdd extends AppCompatActivity {
 
   @Override
   public void finish() {
-    dialogLoader.DismisDialog();
+    if (dialogLoader != null) {
+      dialogLoader.DismisDialog();
+    }
     super.finish();
   }
 }

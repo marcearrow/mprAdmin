@@ -197,7 +197,9 @@ public class EventoAdd extends AppCompatActivity {
 
   @Override
   public void finish() {
-    dialogLoader.DismisDialog();
+    if (dialogLoader != null) {
+      dialogLoader.DismisDialog();
+    }
     super.finish();
   }
 

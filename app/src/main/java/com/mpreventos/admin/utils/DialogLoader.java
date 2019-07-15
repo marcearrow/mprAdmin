@@ -31,6 +31,7 @@ public class DialogLoader {
   public void DismisDialog() {
     if (dialog != null) {
       dialog.dismiss();
+      dialog = null;
     }
   }
 }

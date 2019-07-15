@@ -8,6 +8,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mpreventos.admin.model.Categoria;
+import com.mpreventos.admin.model.Evento;
 import com.mpreventos.admin.model.Producto;
 import com.mpreventos.admin.model.Tematica;
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public class FirebaseHelper {
     }
 
 
-    public void eventosTematicas(Tematica tematca, String nombreEvento) {
+    public void EventosTematicas(Tematica tematca, String nombreEvento) {
         db2 = db.getRoot();
         db2.child("eventoTematicas").child(nombreEvento).child(tematca.getId()).setValue(true);
     }
@@ -89,21 +90,23 @@ public class FirebaseHelper {
         db2.child("categoriaProducto").child(nombreProducto).child(producto.getId()).setValue(true);
     }
 
-    //PARA CONSEGUUIR LOS ELEMENTOS  AQUI DEBES EN VEZ DE AGREGARLO A UNA LISTA PASARLO A UN ADAPTER
-    public void EventosNombre(final FirebaseEventosCallback firebaseEventosCallback) {
-        final ArrayList<String> itemList = new ArrayList<>();
+
+    public void EventosNombre(final FirebaseEventosListaCallback firebaseEventosListaCallback) {
+        final ArrayList<Evento> itemList = new ArrayList<>();
 
         db.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 itemList.clear();
-                itemList.add(0, "Seleccione una opción...");
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     String nombre = ds.child("nombre").getValue().toString();
-                    itemList.add(nombre);
+                    String id = ds.child("id").getValue().toString();
+                    String imgUrl = ds.child("imgUrl").getValue().toString();
+                    Evento evento = new Evento(id, nombre, imgUrl);
+                    itemList.add(evento);
                 }
-                firebaseEventosCallback.onCallback(itemList);
+                firebaseEventosListaCallback.onCallback(itemList);
             }
 
             @Override
@@ -113,10 +116,10 @@ public class FirebaseHelper {
         });
     }
 
-    //DEBES UTIlizar el db.orederBychild("id").equealTo(st)
-    public void TematicasNombre(final FirebaseEventosCallback firebaseEventosCallback, ArrayList<String> lista) {
-        final ArrayList<String> itemList = new ArrayList<>();
-        itemList.clear();
+    public void TematicasNombre(final FirebaseTematicasListaCallback firebaseTematicasListaCallback,
+        ArrayList<String> lista) {
+        final ArrayList<Tematica> tematicas = new ArrayList<>();
+        tematicas.clear();
         for (String st :
                 lista) {
             db.orderByChild("id").equalTo(st).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -125,9 +128,12 @@ public class FirebaseHelper {
 
                     for (DataSnapshot ds : dataSnapshot.getChildren()) {
                         String nombre = ds.child("nombre").getValue().toString();
-                        itemList.add(nombre);
+                        String id = ds.child("id").getValue().toString();
+                        String imgUrl = ds.child("imgUrl").getValue().toString();
+                        Tematica tematica = new Tematica(id, nombre, imgUrl);
+                        tematicas.add(tematica);
                     }
-                    firebaseEventosCallback.onCallback(itemList);
+                    firebaseTematicasListaCallback.onCallback(tematicas);
                 }
 
                 @Override
@@ -144,10 +150,20 @@ public class FirebaseHelper {
 
     }
 
-    public interface FirebaseEventosCallback {
-        void onCallback(ArrayList<String> lista);
+    public interface FirebaseEventosListaCallback {
+
+        void onCallback(ArrayList<Evento> listaDeEventos);
     }
 
+    public interface FirebaseTematicasListaCallback {
+
+        void onCallback(ArrayList<Tematica> listaDeTematicas);
+    }
+
+    public interface FirebaseCategoriasListaCallback {
+
+        void onCallback(ArrayList<Categoria> listaDeCategorias);
+    }
 
 
 }

@@ -27,7 +27,9 @@ import com.google.firebase.storage.UploadTask;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.helper.StorageHelper;
+import com.mpreventos.admin.model.Evento;
 import com.mpreventos.admin.model.Producto;
+import com.mpreventos.admin.model.Tematica;
 import com.mpreventos.admin.utils.DialogAlertSpinner;
 import com.mpreventos.admin.utils.DialogLoader;
 import com.mpreventos.admin.utils.Funciones;
@@ -92,10 +94,12 @@ public class ProductoAdd extends AppCompatActivity {
       setTitle("Agregar producto");
     }
 
+    //TODO: MODIFICAR PRODUCTO Y LOS SPINNER CORRESPONDIENTES ADEMAS DE LUEGO INTENTAR OPTIMIZAR
     final Spinnerloaders spinnerloaders = new Spinnerloaders(this);
     spinnerloaders.adapterEventos(new Spinnerloaders.SpinnerAdaperCallbackEventos() {
+
       @Override
-      public void callbackEventos(ArrayAdapter<String> adapter) {
+      public void callbackEventos(ArrayAdapter<String> adapter, ArrayList<Evento> eventoArrayList) {
         spinnerEvento.setAdapter(adapter);
         spinnerEvento.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
           @Override
@@ -108,8 +112,10 @@ public class ProductoAdd extends AppCompatActivity {
             if (!nombre.equals("Seleccione una opción...")) {
               spinnerloaders
                   .adapterTematicas(new Spinnerloaders.SpinnerAdapterCallbackTematicas() {
+
                     @Override
-                    public void callbackTematicas(ArrayAdapter<String> adapter2) {
+                    public void callbackTematicas(ArrayAdapter<String> adapter2,
+                        ArrayList<Tematica> listaTematicas) {
                       spinnerTematica.setAdapter(adapter2);
                     }
                   }, nombre);
@@ -122,14 +128,14 @@ public class ProductoAdd extends AppCompatActivity {
                       String item = parent.getItemAtPosition(position).toString();
                       getItemName(item);
                       if (!nombre.equals("Seleccione una opción...")) {
-                        spinnerloaders.adapterCategorias(
+                       /* spinnerloaders.adapterCategorias(
                             new Spinnerloaders.SpinnerAdapterCallbackCategorias() {
                               @Override
                               public void callbackCategorias(
                                   ArrayAdapter<String> adapter) {
                                 spinnerCategoria.setAdapter(adapter);
                               }
-                            }, nombre);
+                            }, nombre);*/
                       }
                     }
 
@@ -291,7 +297,9 @@ public class ProductoAdd extends AppCompatActivity {
 
   @Override
   public void finish() {
-    dialogLoader.DismisDialog();
+    if (dialogLoader != null) {
+      dialogLoader.DismisDialog();
+    }
     super.finish();
   }
 }

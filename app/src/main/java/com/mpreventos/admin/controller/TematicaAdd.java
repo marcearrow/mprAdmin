@@ -27,11 +27,13 @@ import com.google.firebase.storage.UploadTask;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.helper.StorageHelper;
+import com.mpreventos.admin.model.Evento;
 import com.mpreventos.admin.model.Tematica;
 import com.mpreventos.admin.utils.DialogAlertSpinner;
 import com.mpreventos.admin.utils.DialogLoader;
 import com.mpreventos.admin.utils.Funciones;
 import com.mpreventos.admin.utils.Spinnerloaders;
+import java.util.ArrayList;
 
 public class TematicaAdd extends AppCompatActivity {
 
@@ -50,7 +52,7 @@ public class TematicaAdd extends AppCompatActivity {
   private Boolean estado;
   private Spinner spinner;
   String nombre;
-  private DialogLoader dialogLoader;
+  private DialogLoader dialogLoader = null;
 
 
   @Override
@@ -92,14 +94,21 @@ public class TematicaAdd extends AppCompatActivity {
     final Spinnerloaders spinnerloaders = new Spinnerloaders(getBaseContext());
     spinnerloaders.adapterEventos(new Spinnerloaders.SpinnerAdaperCallbackEventos() {
       @Override
-      public void callbackEventos(ArrayAdapter<String> adapter) {
+      public void callbackEventos(ArrayAdapter<String> adapter,
+          final ArrayList<Evento> listaEventos) {
+
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
           @Override
           public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             String item = parent.getItemAtPosition(position).toString();
-            getItemName(item);
-
+            if (!item.equals("Seleccione una opción...") && !item.equals("")) {
+              if (listaEventos.get(position - 1).getNombre().equals(item)) {
+                getItemName(listaEventos.get(position - 1).getId());
+              } else {
+                ErrorMensaje();
+              }
+            }
           }
 
           @Override
@@ -163,7 +172,7 @@ public class TematicaAdd extends AppCompatActivity {
           if (!estado) {
             ErrorMensaje();
           } else if (uri == null) {
-            firebaseHelper.eventosTematicas(tematica, nombre);
+            firebaseHelper.EventosTematicas(tematica, nombre);
             SuccesMensaje();
             finish();
           } else {
@@ -192,7 +201,7 @@ public class TematicaAdd extends AppCompatActivity {
                       tematica = new Tematica(id, nombreTematica.getText().toString(),
                           downloadUri.toString());
                       firebaseHelper.guardarDatosFirebase(tematica, tematica.getId());
-                      firebaseHelper.eventosTematicas(tematica, nombre);
+                      firebaseHelper.EventosTematicas(tematica, nombre);
                       SuccesMensaje();
                       finish();
                     } else {
@@ -236,8 +245,12 @@ public class TematicaAdd extends AppCompatActivity {
 
   @Override
   public void finish() {
-    dialogLoader.DismisDialog();
+    if (dialogLoader != null) {
+      dialogLoader.DismisDialog();
+    }
     super.finish();
   }
+
+  //TODO: Arreglar las listas ver mensajes todo revisar todo una vez mas
 }
 

@@ -9,6 +9,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mpreventos.admin.helper.FirebaseHelper;
+import com.mpreventos.admin.helper.FirebaseHelper.FirebaseEventosListaCallback;
+import com.mpreventos.admin.model.Evento;
+import com.mpreventos.admin.model.Tematica;
 import java.util.ArrayList;
 
 public class Spinnerloaders {
@@ -21,27 +24,36 @@ public class Spinnerloaders {
     this.context = context;
   }
 
+
   public void adapterEventos(final SpinnerAdaperCallbackEventos spinnerAdaperCallbackEventos) {
     DatabaseReference eventos = FirebaseDatabase.getInstance().getReference("eventos");
     FirebaseHelper helperEventos = new FirebaseHelper(eventos);
-
-    helperEventos.EventosNombre(new FirebaseHelper.FirebaseEventosCallback() {
+    helperEventos.EventosNombre(new FirebaseEventosListaCallback() {
       @Override
-      public void onCallback(ArrayList<String> lista) {
-        adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_activated_1, lista);
-        spinnerAdaperCallbackEventos.callbackEventos(adapter);
+      public void onCallback(ArrayList<Evento> listaDeEventos) {
+
+        ArrayList<String> nombreEventosLista = new ArrayList<>();
+        nombreEventosLista.add(0, "Seleccione una opción...");
+
+        for (Evento evento :
+            listaDeEventos) {
+          nombreEventosLista.add(evento.getNombre());
+        }
+        adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_activated_1,
+            nombreEventosLista);
+        spinnerAdaperCallbackEventos.callbackEventos(adapter, listaDeEventos);
       }
     });
   }
 
-  // PARA MANEJAR LAS RELACIONES DEBES UTILIZAR ALGO ASI
+
   public void adapterTematicas(
       final SpinnerAdapterCallbackTematicas spinnerAdapterCallbackTematicas, String evento) {
     DatabaseReference eventosTematicas = FirebaseDatabase.getInstance()
         .getReference("eventoTematicas").child(evento);
+
     DatabaseReference tematicas = FirebaseDatabase.getInstance().getReference("tematicas");
 
-    //final FirebaseHelper helperEventosTematicas= new FirebaseHelper(eventosTematicas);
     final FirebaseHelper firebaseHelperTematicas = new FirebaseHelper(tematicas);
 
     eventosTematicas.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -58,21 +70,29 @@ public class Spinnerloaders {
           }
 
           if (lista.size() > 0) {
-            firebaseHelperTematicas.TematicasNombre(new FirebaseHelper.FirebaseEventosCallback() {
-              @Override
-              public void onCallback(ArrayList<String> lista) {
-                adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_activated_1,
-                    lista);
-                spinnerAdapterCallbackTematicas.callbackTematicas(adapter);
-              }
-            }, lista);
+            firebaseHelperTematicas
+                .TematicasNombre(new FirebaseHelper.FirebaseTematicasListaCallback() {
+
+                  @Override
+                  public void onCallback(ArrayList<Tematica> listaDeTematicas) {
+                    ArrayList<String> nombreTematicas = new ArrayList<>();
+                    for (Tematica tematica :
+                        listaDeTematicas) {
+                      nombreTematicas.add(tematica.getNombre());
+                    }
+                    adapter = new ArrayAdapter<>(context,
+                        android.R.layout.simple_list_item_activated_1,
+                        nombreTematicas);
+                    spinnerAdapterCallbackTematicas.callbackTematicas(adapter, listaDeTematicas);
+                  }
+                }, lista);
           }
         } else {
 
           lista.add(0, "No se encontró ninguna temática");
           adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_activated_1,
               lista);
-          spinnerAdapterCallbackTematicas.callbackTematicas(adapter);
+          spinnerAdapterCallbackTematicas.callbackTematicas(adapter, null);
         }
 
       }
@@ -85,7 +105,7 @@ public class Spinnerloaders {
 
   }
 
-  public void adapterCategorias(
+ /* public void adapterCategorias(
       final SpinnerAdapterCallbackCategorias spinnerAdapterCallbackCategorias, String tematica) {
     DatabaseReference tematicasCategorias = FirebaseDatabase.getInstance()
         .getReference("tematicaCategorias").child(tematica);
@@ -107,9 +127,14 @@ public class Spinnerloaders {
           }
 
           if (lista.size() > 0) {
-            firebaseHelperCategorias.TematicasNombre(new FirebaseHelper.FirebaseEventosCallback() {
+            firebaseHelperCategorias.TematicasNombre(new FirebaseHelper.FirebaseCategoriasListaCallback() {
               @Override
-              public void onCallback(ArrayList<String> lista) {
+              public void onCallback(ArrayList<Categoria> listaDeCategorias) {
+                ArrayList<String> lista = new ArrayList<>();
+                for (Categoria categoria :
+                    listaDeCategorias) {
+                  lista.add(categoria.getNombre());
+                }
                 adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_activated_1,
                     lista);
                 spinnerAdapterCallbackCategorias.callbackCategorias(adapter);
@@ -128,21 +153,18 @@ public class Spinnerloaders {
       public void onCancelled(@NonNull DatabaseError databaseError) {
 
       }
-    });
-
-
-  }
+    });*/
 
 
   public interface SpinnerAdaperCallbackEventos {
 
-    void callbackEventos(ArrayAdapter<String> adapter);
+    void callbackEventos(ArrayAdapter<String> adapter, ArrayList<Evento> listaEventos);
 
   }
 
   public interface SpinnerAdapterCallbackTematicas {
 
-    void callbackTematicas(ArrayAdapter<String> adapter);
+    void callbackTematicas(ArrayAdapter<String> adapter, ArrayList<Tematica> listaTematicas);
   }
 
   public interface SpinnerAdapterCallbackCategorias {
