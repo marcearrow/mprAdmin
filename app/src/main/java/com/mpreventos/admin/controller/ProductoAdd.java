@@ -1,6 +1,5 @@
 package com.mpreventos.admin.controller;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,6 +28,8 @@ import com.mpreventos.admin.R;
 import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.helper.StorageHelper;
 import com.mpreventos.admin.model.Producto;
+import com.mpreventos.admin.utils.DialogAlertSpinner;
+import com.mpreventos.admin.utils.DialogLoader;
 import com.mpreventos.admin.utils.Funciones;
 import com.mpreventos.admin.utils.Spinnerloaders;
 import java.util.ArrayList;
@@ -48,9 +49,9 @@ public class ProductoAdd extends AppCompatActivity {
   private String id;
   private Button modButton;
   private Boolean estado;
+  private DialogLoader dialogLoader;
   private Uri uri;
   private String nombre;
-  Dialog dialog;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -120,15 +121,16 @@ public class ProductoAdd extends AppCompatActivity {
                         int position, long id) {
                       String item = parent.getItemAtPosition(position).toString();
                       getItemName(item);
-
-                      spinnerloaders.adapterCategorias(
-                          new Spinnerloaders.SpinnerAdapterCallbackCategorias() {
-                            @Override
-                            public void callbackCategorias(
-                                ArrayAdapter<String> adapter) {
-                              spinnerCategoria.setAdapter(adapter);
-                            }
-                          }, nombre);
+                      if (!nombre.equals("Seleccione una opción...")) {
+                        spinnerloaders.adapterCategorias(
+                            new Spinnerloaders.SpinnerAdapterCallbackCategorias() {
+                              @Override
+                              public void callbackCategorias(
+                                  ArrayAdapter<String> adapter) {
+                                spinnerCategoria.setAdapter(adapter);
+                              }
+                            }, nombre);
+                      }
                     }
 
                     @Override
@@ -178,66 +180,84 @@ public class ProductoAdd extends AppCompatActivity {
 
       case R.id.btAddProducto:
 
-        CreateDialog();
-        ShowDialog();
-
-        firebaseHelper = new FirebaseHelper(mDataBase);
-        if (modButton.getText().toString().toLowerCase().equals("modificar")) {
-          producto = new Producto(id, nombreProducto.getText().toString(),
-              descripcionProducto.getText().toString(), imgUrl);
-
-        } else {
-          id = firebaseHelper.getIdkey();
-          producto = new Producto(id, nombreProducto.getText().toString(),
-              descripcionProducto.getText().toString(), LOADING_IMAGE_URL);
-        }
-
-        estado = firebaseHelper.guardarDatosFirebase(producto, id);
-
-        if (estado && uri != null) {
-          final StorageReference storageReference = FirebaseStorage.getInstance()
-              .getReference(PRODUCTOS_CHILD).child(producto.getId());
-          StorageHelper storageHelper = new StorageHelper(storageReference);
-          UploadTask task = storageHelper.uploadImage(uri);
-
-          Task<Uri> urlTask = task
-              .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task)
-                    throws Exception {
-                  if (!task.isSuccessful()) {
-                    throw task.getException();
-                  }// Continue with the task to get the download URL
-
-                  return storageReference.getDownloadUrl();
-                }
-              }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                  if (task.isSuccessful()) {
-
-                    Uri downloadUri = task.getResult();
-                    producto = new Producto(id, nombreProducto.getText().toString(),
-                        descripcionProducto.getText().toString(), downloadUri.toString());
-                    firebaseHelper.guardarDatosFirebase(producto, producto.getId());
-
-                  }
-                  //TODO POR ERROR
-                }
-              });
-          firebaseHelper.CategoriaProducto(producto, nombre);
-          Toast.makeText(this, "Producto agregado", Toast.LENGTH_LONG).show();
-          finish();
-          DismmisDialog();
+        if (Funciones.validarTexto(nombreProducto.getText().toString()) && Funciones
+            .validarTexto(descripcionProducto.getText().toString())) {
+          nombreProducto.setError("El nombre no debe estar vacío");
+          descripcionProducto.setError("La descripción no puede estar vacía ");
+          break;
+        } else if (Funciones.validarTexto(descripcionProducto.getText().toString())) {
+          descripcionProducto.setError("La descripción no puede estar vacía ");
+          break;
+        } else if (Funciones.validarTexto(nombreProducto.getText().toString())) {
+          nombreProducto.setError("El nombre no debe estar vacío");
+          break;
+        } else if (Funciones.validarTexto(nombre) || nombre.equals("Seleccione una opción...")
+            || nombre.equals("No se encontró ninguna categoría")) {
+          DialogAlertSpinner dialogAlertSpinner = new DialogAlertSpinner(ProductoAdd.this);
+          dialogAlertSpinner.DialogCreator();
           break;
         } else {
-          DismmisDialog();
+
+          dialogLoader = new DialogLoader(this);
+          dialogLoader.CreateDialog();
+          dialogLoader.ShowDialog();
+
+          firebaseHelper = new FirebaseHelper(mDataBase);
+          if (modButton.getText().toString().toLowerCase().equals("modificar")) {
+            producto = new Producto(id, nombreProducto.getText().toString(),
+                descripcionProducto.getText().toString(), imgUrl);
+
+          } else {
+            id = firebaseHelper.getIdkey();
+            producto = new Producto(id, nombreProducto.getText().toString(),
+                descripcionProducto.getText().toString(), LOADING_IMAGE_URL);
+          }
+
+          estado = firebaseHelper.guardarDatosFirebase(producto, id);
+
+          if (!estado) {
+            ErrorMensaje();
+          } else if (uri == null) {
+            firebaseHelper.CategoriaProducto(producto, nombre);
+            SuccesMensaje();
+            finish();
+          } else {
+            final StorageReference storageReference = FirebaseStorage.getInstance()
+                .getReference(PRODUCTOS_CHILD).child(producto.getId());
+            StorageHelper storageHelper = new StorageHelper(storageReference);
+            UploadTask task = storageHelper.uploadImage(uri);
+
+            Task<Uri> urlTask = task
+                .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                  @Override
+                  public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task)
+                      throws Exception {
+                    if (!task.isSuccessful()) {
+                      ErrorMensaje();
+                      throw task.getException();
+                    }// Continue with the task to get the download URL
+
+                    return storageReference.getDownloadUrl();
+                  }
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                  @Override
+                  public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+
+                      Uri downloadUri = task.getResult();
+                      producto = new Producto(id, nombreProducto.getText().toString(),
+                          descripcionProducto.getText().toString(), downloadUri.toString());
+                      firebaseHelper.guardarDatosFirebase(producto, producto.getId());
+                      firebaseHelper.CategoriaProducto(producto, nombre);
+                      SuccesMensaje();
+                      finish();
+                    } else {
+                      ErrorMensaje();
+                    }
+                  }
+                });
+          }
         }
-        firebaseHelper.CategoriaProducto(producto, nombre);
-        Toast.makeText(this, "Producto agregado", Toast.LENGTH_LONG).show();
-        finish();
-
-
     }
   }
 
@@ -259,22 +279,19 @@ public class ProductoAdd extends AppCompatActivity {
     }
   }
 
-  private void ShowDialog() {
-    if (dialog != null) {
-      dialog.show();
-    }
+  private void SuccesMensaje() {
+    Toast.makeText(this, "Producto agregado exitosamente", Toast.LENGTH_SHORT).show();
+    dialogLoader.DismisDialog();
   }
 
-  private void DismmisDialog() {
-    if (dialog != null) {
-      dialog.dismiss();
-    }
+  private void ErrorMensaje() {
+    Toast.makeText(this, "Ocurrio un error", Toast.LENGTH_SHORT).show();
+    dialogLoader.DismisDialog();
   }
 
-  private void CreateDialog() {
-    dialog = new Dialog(this);
-    dialog.setContentView(R.layout.dialog);
-    dialog.setCancelable(false);
+  @Override
+  public void finish() {
+    dialogLoader.DismisDialog();
+    super.finish();
   }
-
 }

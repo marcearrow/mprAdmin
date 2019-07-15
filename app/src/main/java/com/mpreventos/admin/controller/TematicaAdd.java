@@ -1,6 +1,5 @@
 package com.mpreventos.admin.controller;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,6 +28,7 @@ import com.mpreventos.admin.R;
 import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.helper.StorageHelper;
 import com.mpreventos.admin.model.Tematica;
+import com.mpreventos.admin.utils.DialogAlertSpinner;
 import com.mpreventos.admin.utils.DialogLoader;
 import com.mpreventos.admin.utils.Funciones;
 import com.mpreventos.admin.utils.Spinnerloaders;
@@ -38,8 +38,6 @@ public class TematicaAdd extends AppCompatActivity {
   private static final String LOADING_IMAGE_URL = "https://firebasestorage.googleapis.com/v0/b/mprfirebase-7753b.appspot.com/o/logo-mpr-decoracion.png?alt=media&token=49548e12-c035-4995-be4d-f38be90bbc06";
   private static final String TEMATICAS_CHILD = "tematicas";
   private static final int REQUEST_IMAGE = 2;
-  private static final String LOG = "tematicaSpinner";
-  private static final String TAG = "spinner1";
   private Uri uri;
   private DatabaseReference mDataBase;
   private ImageView imagenTematica;
@@ -51,9 +49,7 @@ public class TematicaAdd extends AppCompatActivity {
   private Button modButton;
   private Boolean estado;
   private Spinner spinner;
-  String selected_item;
   String nombre;
-  Dialog dialog;
   private DialogLoader dialogLoader;
 
 
@@ -133,60 +129,78 @@ public class TematicaAdd extends AppCompatActivity {
         startActivityForResult(intent, REQUEST_IMAGE);
         break;
       case R.id.btAddTematica:
-        dialogLoader = new DialogLoader(this);
-        dialogLoader.CreateDialog();
-        dialogLoader.ShowDialog();
 
-        firebaseHelper = new FirebaseHelper(mDataBase);
-        if (modButton.getText().toString().toLowerCase().equals("modificar")) {
-          tematica = new Tematica(id, nombreTematica.getText().toString(), imgUrl);
-
+        if (Funciones.validarTexto(nombreTematica.getText().toString()) && Funciones
+            .validarTexto(nombre)) {
+          nombreTematica.setError("El nombre no puede estar vacío");
+          DialogAlertSpinner dialogAlertSpinner = new DialogAlertSpinner(TematicaAdd.this);
+          dialogAlertSpinner.DialogCreator();
+          break;
+        } else if (Funciones.validarTexto(nombreTematica.getText().toString())) {
+          nombreTematica.setError("El nombre no puede estar vacío");
+          break;
+        } else if (Funciones.validarTexto(nombre) || nombre.equals("Seleccione una opción...")) {
+          DialogAlertSpinner dialogAlertSpinner = new DialogAlertSpinner(TematicaAdd.this);
+          dialogAlertSpinner.DialogCreator();
+          break;
         } else {
-          id = firebaseHelper.getIdkey();
-          tematica = new Tematica(id, nombreTematica.getText().toString(), LOADING_IMAGE_URL);
-        }
 
-        estado = firebaseHelper.guardarDatosFirebase(tematica, id);
-        if (!estado) {
-          ErrorMensaje();
-        } else if (uri == null) {
-          firebaseHelper.eventosTematicas(tematica, nombre);
-          SuccesMensaje();
-          finish();
-        } else {
-          final StorageReference storageReference = FirebaseStorage.getInstance()
-              .getReference(TEMATICAS_CHILD).child(tematica.getId());
-          StorageHelper storageHelper = new StorageHelper(storageReference);
-          UploadTask task = storageHelper.uploadImage(uri);
+          dialogLoader = new DialogLoader(this);
+          dialogLoader.CreateDialog();
+          dialogLoader.ShowDialog();
 
-          Task<Uri> urlTask = task
-              .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task)
-                    throws Exception {
-                  if (!task.isSuccessful()) {
-                    ErrorMensaje();
-                    throw task.getException();
-                  }// Continue with the task to get the download URL
-                  return storageReference.getDownloadUrl();
-                }
-              }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                  if (task.isSuccessful()) {
+          firebaseHelper = new FirebaseHelper(mDataBase);
+          if (modButton.getText().toString().toLowerCase().equals("modificar")) {
+            tematica = new Tematica(id, nombreTematica.getText().toString(), imgUrl);
 
-                    Uri downloadUri = task.getResult();
-                    tematica = new Tematica(id, nombreTematica.getText().toString(),
-                        downloadUri.toString());
-                    firebaseHelper.guardarDatosFirebase(tematica, tematica.getId());
-                    firebaseHelper.eventosTematicas(tematica, nombre);
-                    SuccesMensaje();
-                    finish();
-                  } else {
-                    ErrorMensaje();
+          } else {
+            id = firebaseHelper.getIdkey();
+            tematica = new Tematica(id, nombreTematica.getText().toString(), LOADING_IMAGE_URL);
+          }
+
+          estado = firebaseHelper.guardarDatosFirebase(tematica, id);
+
+          if (!estado) {
+            ErrorMensaje();
+          } else if (uri == null) {
+            firebaseHelper.eventosTematicas(tematica, nombre);
+            SuccesMensaje();
+            finish();
+          } else {
+            final StorageReference storageReference = FirebaseStorage.getInstance()
+                .getReference(TEMATICAS_CHILD).child(tematica.getId());
+            StorageHelper storageHelper = new StorageHelper(storageReference);
+            UploadTask task = storageHelper.uploadImage(uri);
+
+            Task<Uri> urlTask = task
+                .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                  @Override
+                  public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task)
+                      throws Exception {
+                    if (!task.isSuccessful()) {
+                      ErrorMensaje();
+                      throw task.getException();
+                    }// Continue with the task to get the download URL
+                    return storageReference.getDownloadUrl();
                   }
-                }
-              });
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                  @Override
+                  public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+
+                      Uri downloadUri = task.getResult();
+                      tematica = new Tematica(id, nombreTematica.getText().toString(),
+                          downloadUri.toString());
+                      firebaseHelper.guardarDatosFirebase(tematica, tematica.getId());
+                      firebaseHelper.eventosTematicas(tematica, nombre);
+                      SuccesMensaje();
+                      finish();
+                    } else {
+                      ErrorMensaje();
+                    }
+                  }
+                });
+          }
         }
     }
   }
@@ -211,6 +225,7 @@ public class TematicaAdd extends AppCompatActivity {
 
   private void SuccesMensaje() {
     Toast.makeText(this, "Temática agregada exitosamente", Toast.LENGTH_SHORT).show();
+    dialogLoader.DismisDialog();
   }
 
   private void ErrorMensaje() {
@@ -219,5 +234,10 @@ public class TematicaAdd extends AppCompatActivity {
   }
 
 
+  @Override
+  public void finish() {
+    dialogLoader.DismisDialog();
+    super.finish();
+  }
 }
 

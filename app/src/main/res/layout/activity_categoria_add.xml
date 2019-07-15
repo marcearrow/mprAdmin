@@ -53,60 +53,43 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:layout_marginStart="@dimen/activity_vertical_margin"
-    android:layout_marginEnd="@dimen/activity_vertical_margin"/>
+    android:layout_marginEnd="@dimen/activity_vertical_margin"
+    android:layout_marginBottom="@dimen/dimen_margin8"/>
 
-  <LinearLayout
+  <GridLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:orientation="horizontal">
+    android:layout_height="wrap_content"
 
-    <LinearLayout
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/dimen_margin8"
+    android:columnCount="2">
 
-      android:orientation="vertical">
+    <androidx.appcompat.widget.AppCompatTextView
+      style="@style/TextAppearance.MaterialComponents.Body1"
+      android:layout_marginStart="@dimen/activity_vertical_margin"
+      android:text="@string/eventos"/>
 
-      <androidx.appcompat.widget.AppCompatTextView
-        style="@style/TextAppearance.MaterialComponents.Body1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:text="@string/eventos"/>
+    <androidx.appcompat.widget.AppCompatTextView
+      android:layout_marginStart="@dimen/activity_vertical_margin"
+      style="@style/TextAppearance.MaterialComponents.Body1"
+      android:text="@string/tematicas"/>
 
-      <androidx.appcompat.widget.AppCompatSpinner
-        android:id="@+id/spinnerCategoriaEvento"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <androidx.appcompat.widget.AppCompatSpinner
+      android:id="@+id/spinnerCategoriaEvento"
+      android:layout_width="210dp"
+      />
 
-    </LinearLayout>
 
-    <LinearLayout
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
+    <androidx.appcompat.widget.AppCompatSpinner
+      android:layout_width="210dp"
+      android:id="@+id/spinnerCategoriaTematica"/>
 
-      android:orientation="vertical">
+  </GridLayout>
 
-      <androidx.appcompat.widget.AppCompatTextView
-        style="@style/TextAppearance.MaterialComponents.Body1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:text="@string/tematicas"/>
-
-      <androidx.appcompat.widget.AppCompatSpinner
-        android:id="@+id/spinnerCategoriaTematica"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-    </LinearLayout>
-
-  </LinearLayout>
 
   <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/dimen_margin8"
     android:gravity="center_horizontal">
 
     <com.google.android.material.button.MaterialButton

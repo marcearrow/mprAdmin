@@ -1,6 +1,5 @@
 package com.mpreventos.admin.controller;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,6 +28,8 @@ import com.mpreventos.admin.R;
 import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.helper.StorageHelper;
 import com.mpreventos.admin.model.Categoria;
+import com.mpreventos.admin.utils.DialogAlertSpinner;
+import com.mpreventos.admin.utils.DialogLoader;
 import com.mpreventos.admin.utils.Funciones;
 import com.mpreventos.admin.utils.Spinnerloaders;
 import java.util.ArrayList;
@@ -38,7 +39,6 @@ public class CategoriaAdd extends AppCompatActivity {
   private static final String LOADING_IMAGE_URL = "https://firebasestorage.googleapis.com/v0/b/mprfirebase-7753b.appspot.com/o/logo-mpr-decoracion.png?alt=media&token=49548e12-c035-4995-be4d-f38be90bbc06";
   private static final String CATEGORIAS_CHILD = "categorias";
   private static final int REQUEST_IMAGE = 2;
-  private static final String TAG = "spinner";
   private DatabaseReference mDataBase;
   private ImageView imagenCategoria;
   private EditText nombreCategoria;
@@ -51,7 +51,7 @@ public class CategoriaAdd extends AppCompatActivity {
   private Boolean estado;
   private Uri uri;
   private String nombre;
-  Dialog dialog;
+  private DialogLoader dialogLoader;
 
 
   @Override
@@ -167,65 +167,85 @@ public class CategoriaAdd extends AppCompatActivity {
 
         break;
       case R.id.btAddCategoria:
-
-        CreateDialog();
-        ShowDialog();
-
-        firebaseHelper = new FirebaseHelper(mDataBase);
-        if (modButton.getText().toString().toLowerCase().equals("modificar")) {
-          categoria = new Categoria(id, nombreCategoria.getText().toString(),
-              descripcionCategoria.getText().toString(), imgUrl);
-
-        } else {
-          id = firebaseHelper.getIdkey();
-          categoria = new Categoria(id, nombreCategoria.getText().toString(),
-              descripcionCategoria.getText().toString(), LOADING_IMAGE_URL);
-        }
-
-        estado = firebaseHelper.guardarDatosFirebase(categoria, id);
-
-        if (estado && uri != null) {
-          final StorageReference storageReference = FirebaseStorage.getInstance()
-              .getReference(CATEGORIAS_CHILD).child(categoria.getId());
-          StorageHelper storageHelper = new StorageHelper(storageReference);
-          UploadTask task = storageHelper.uploadImage(uri);
-
-          Task<Uri> urlTask = task
-              .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task)
-                    throws Exception {
-                  if (!task.isSuccessful()) {
-                    throw task.getException();
-                  }// Continue with the task to get the download URL
-
-                  return storageReference.getDownloadUrl();
-                }
-              }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                  if (task.isSuccessful()) {
-
-                    Uri downloadUri = task.getResult();
-                    categoria = new Categoria(id, nombreCategoria.getText().toString(),
-                        descripcionCategoria.getText().toString(), downloadUri.toString());
-                    firebaseHelper.guardarDatosFirebase(categoria, categoria.getId());
-
-                  }
-                  //TODO POR ERROR
-                }
-              });
-          firebaseHelper.TematicaCategora(categoria, nombre);
-          Toast.makeText(this, "Categoria agregada", Toast.LENGTH_LONG).show();
-          finish();
-          DismmisDialog();
+        if (Funciones.validarTexto(nombreCategoria.getText().toString()) && Funciones
+            .validarTexto(descripcionCategoria.getText().toString())) {
+          nombreCategoria.setError("El nombre no debe estar vacío");
+          descripcionCategoria.setError("La descripción no puede estar vacía ");
+          break;
+        } else if (Funciones.validarTexto(descripcionCategoria.getText().toString())) {
+          descripcionCategoria.setError("La descripción no puede estar vacía ");
+          break;
+        } else if (Funciones.validarTexto(nombreCategoria.getText().toString())) {
+          nombreCategoria.setError("El nombre no debe estar vacío");
+          break;
+        } else if (Funciones.validarTexto(nombre) || nombre.equals("Seleccione una opción...")
+            || nombre.equals("No se encontró ninguna temática")) {
+          DialogAlertSpinner dialogAlertSpinner = new DialogAlertSpinner(CategoriaAdd.this);
+          dialogAlertSpinner.DialogCreator();
           break;
         } else {
-          DismmisDialog();
+
+          dialogLoader = new DialogLoader(this);
+          dialogLoader.CreateDialog();
+          dialogLoader.ShowDialog();
+
+          firebaseHelper = new FirebaseHelper(mDataBase);
+          if (modButton.getText().toString().toLowerCase().equals("modificar")) {
+            categoria = new Categoria(id, nombreCategoria.getText().toString(),
+                descripcionCategoria.getText().toString(), imgUrl);
+
+          } else {
+            id = firebaseHelper.getIdkey();
+            categoria = new Categoria(id, nombreCategoria.getText().toString(),
+                descripcionCategoria.getText().toString(), LOADING_IMAGE_URL);
+
+            estado = firebaseHelper.guardarDatosFirebase(categoria, id);
+
+            if (!estado) {
+              ErrorMensaje();
+            } else if (uri == null) {
+              firebaseHelper.TematicaCategora(categoria, nombre);
+              SuccesMensaje();
+              finish();
+            } else {
+
+              final StorageReference storageReference = FirebaseStorage.getInstance()
+                  .getReference(CATEGORIAS_CHILD).child(categoria.getId());
+              StorageHelper storageHelper = new StorageHelper(storageReference);
+              UploadTask task = storageHelper.uploadImage(uri);
+
+              Task<Uri> urlTask = task
+                  .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                    @Override
+                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task)
+                        throws Exception {
+                      if (!task.isSuccessful()) {
+                        ErrorMensaje();
+                        throw task.getException();
+                      }// Continue with the task to get the download URL
+
+                      return storageReference.getDownloadUrl();
+                    }
+                  }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                      if (task.isSuccessful()) {
+
+                        Uri downloadUri = task.getResult();
+                        categoria = new Categoria(id, nombreCategoria.getText().toString(),
+                            descripcionCategoria.getText().toString(), downloadUri.toString());
+                        firebaseHelper.guardarDatosFirebase(categoria, categoria.getId());
+                        firebaseHelper.TematicaCategora(categoria, nombre);
+                        SuccesMensaje();
+                        finish();
+                      } else {
+                        ErrorMensaje();
+                      }
+                    }
+                  });
+            }
+          }
         }
-        firebaseHelper.TematicaCategora(categoria, nombre);
-        Toast.makeText(this, "Categoria agregada", Toast.LENGTH_LONG).show();
-        finish();
     }
   }
 
@@ -247,23 +267,19 @@ public class CategoriaAdd extends AppCompatActivity {
     }
   }
 
-  private void ShowDialog() {
-    if (dialog != null && !dialog.isShowing()) {
-      dialog.show();
-    }
+  private void SuccesMensaje() {
+    Toast.makeText(this, "Categoria agregada exitosamente", Toast.LENGTH_SHORT).show();
+    dialogLoader.DismisDialog();
   }
 
-  private void DismmisDialog() {
-    if (dialog != null && dialog.isShowing()) {
-      dialog.dismiss();
-    }
+  private void ErrorMensaje() {
+    Toast.makeText(this, "Ocurrio un error", Toast.LENGTH_SHORT).show();
+    dialogLoader.DismisDialog();
   }
 
-  private void CreateDialog() {
-    dialog = new Dialog(this);
-    dialog.setContentView(R.layout.dialog);
-    dialog.setCancelable(false);
-    dialog.show();
+  @Override
+  public void finish() {
+    dialogLoader.DismisDialog();
+    super.finish();
   }
-
 }

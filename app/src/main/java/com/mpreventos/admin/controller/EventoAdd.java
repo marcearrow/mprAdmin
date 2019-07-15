@@ -99,69 +99,76 @@ public class EventoAdd extends AppCompatActivity {
 
         break;
       case R.id.btAddEvento:
-        dialogLoader = new DialogLoader(this);
-        dialogLoader.CreateDialog();
-        dialogLoader.ShowDialog();
 
-        firebaseHelper = new FirebaseHelper(mDataBase);
-
-        if (modButton.getText().toString().toLowerCase().equals("modificar")) {
-          tempEvento = new Evento(id, nombreEvento.getText().toString(), imgUrl);
-
+        if (Funciones.validarTexto(nombreEvento.getText().toString())) {
+          nombreEvento.setError("El nombre no puede estar vacío");
+          break;
         } else {
-          id = firebaseHelper.getIdkey();
-          tempEvento = new Evento(id, nombreEvento.getText().toString(), LOADING_IMAGE_URL);
-        }
 
-        estado = firebaseHelper.guardarDatosFirebase(tempEvento, id);
+          dialogLoader = new DialogLoader(this);
+          dialogLoader.CreateDialog();
+          dialogLoader.ShowDialog();
 
-        if (!estado) {
-          ErrorMensaje();
-        } else if (uri == null) {
-          SuccesMensaje();
-          finish();
-        } else {
-          final StorageReference storageReference = FirebaseStorage.getInstance()
-              .getReference(EVENTOS_CHILD).child(tempEvento.getId());
-          StorageHelper storageHelper = new StorageHelper(storageReference);
-          UploadTask task = storageHelper.uploadImage(uri);
+          firebaseHelper = new FirebaseHelper(mDataBase);
 
-          Task<Uri> urlTask = task
-              .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                @Override
-                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task)
-                    throws Exception {
-                  if (!task.isSuccessful()) {
-                    ErrorMensaje();
-                    throw task.getException();
+          if (modButton.getText().toString().toLowerCase().equals("modificar")) {
+            tempEvento = new Evento(id, nombreEvento.getText().toString(), imgUrl);
 
-                  }// Continue with the task to get the download URL
-                  return storageReference.getDownloadUrl();
-                }
+          } else {
+            id = firebaseHelper.getIdkey();
+            tempEvento = new Evento(id, nombreEvento.getText().toString(), LOADING_IMAGE_URL);
+          }
 
-              }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                @Override
-                public void onComplete(@NonNull Task<Uri> task) {
-                  if (task.isSuccessful()) {
+          estado = firebaseHelper.guardarDatosFirebase(tempEvento, id);
 
-                    Uri downloadUri = task.getResult();
-                    tempEvento = new Evento(id, nombreEvento.getText().toString(),
-                        downloadUri.toString());
-                    firebaseHelper.guardarDatosFirebase(tempEvento, tempEvento.getId());
-                    SuccesMensaje();
-                    finish();
-                  } else {
-                    ErrorMensaje();
+          if (!estado) {
+            ErrorMensaje();
+          } else if (uri == null) {
+            SuccesMensaje();
+            finish();
+          } else {
+            final StorageReference storageReference = FirebaseStorage.getInstance()
+                .getReference(EVENTOS_CHILD).child(tempEvento.getId());
+            StorageHelper storageHelper = new StorageHelper(storageReference);
+            UploadTask task = storageHelper.uploadImage(uri);
+
+            Task<Uri> urlTask = task
+                .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                  @Override
+                  public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task)
+                      throws Exception {
+                    if (!task.isSuccessful()) {
+                      ErrorMensaje();
+                      throw task.getException();
+
+                    }// Continue with the task to get the download URL
+                    return storageReference.getDownloadUrl();
                   }
-                }
-              });
-        }
 
+                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                  @Override
+                  public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+
+                      Uri downloadUri = task.getResult();
+                      tempEvento = new Evento(id, nombreEvento.getText().toString(),
+                          downloadUri.toString());
+                      firebaseHelper.guardarDatosFirebase(tempEvento, tempEvento.getId());
+                      SuccesMensaje();
+                      finish();
+                    } else {
+                      ErrorMensaje();
+                    }
+                  }
+                });
+          }
+        }
     }
   }
 
   private void SuccesMensaje() {
     Toast.makeText(this, "Evento agregado exitosamente", Toast.LENGTH_SHORT).show();
+    dialogLoader.DismisDialog();
   }
 
   private void ErrorMensaje() {
@@ -188,5 +195,10 @@ public class EventoAdd extends AppCompatActivity {
     }
   }
 
+  @Override
+  public void finish() {
+    dialogLoader.DismisDialog();
+    super.finish();
+  }
 
 }
