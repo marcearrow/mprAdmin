@@ -56,12 +56,12 @@ public class FirebaseHelper {
   }
 
   //Eliminar item
-  public Boolean EliminarNodoFirebase(String nodo, String key) {
-    if (nodo == null) {
+  public Boolean EliminarNodoFirebase(String key) {
+    if (db == null) {
       estado = false;
     } else {
       try {
-        db.child(nodo).child(key).removeValue();
+        db.child(key).removeValue();
         estado = true;
       } catch (DatabaseException ex) {
         ex.getStackTrace();

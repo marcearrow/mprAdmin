@@ -63,7 +63,8 @@ public class EventoLista extends AppCompatActivity {
 
   private void obtenerEventos() {
         try {
-            db.child(EVENT_CHILD).getRef().addValueEventListener(new ValueEventListener() {
+            db = db.child(EVENT_CHILD);
+            db.getRef().addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
@@ -78,7 +79,8 @@ public class EventoLista extends AppCompatActivity {
                                 eventoLista.add(new Evento(id, nombre, imgUrl));
                             }
 
-                            eventoAdapter = new EventoAdapter(R.layout.itemlist_evento, eventoLista, getApplicationContext());
+                            eventoAdapter = new EventoAdapter(R.layout.itemlist_evento, eventoLista,
+                                EventoLista.this, db);
                             recyclerView.setAdapter(eventoAdapter);
                         }
                     }

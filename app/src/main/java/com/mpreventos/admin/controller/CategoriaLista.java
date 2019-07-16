@@ -56,7 +56,8 @@ public class CategoriaLista extends AppCompatActivity {
 
     private void obtenerCategorias() {
         try {
-            db.child(CATEGORIA_CHILD).getRef().addValueEventListener(new ValueEventListener() {
+            db = db.child(CATEGORIA_CHILD);
+            db.getRef().addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
@@ -70,7 +71,8 @@ public class CategoriaLista extends AppCompatActivity {
                                 String id = ds.child("id").getValue().toString();
                                 categoriaLista.add(new Categoria(id, nombre, descripcion, imgUrl));
                             }
-                            categoriaAdapter = new CategoriaAdapter(R.layout.itemlist_categoria, categoriaLista, getApplicationContext());
+                            categoriaAdapter = new CategoriaAdapter(R.layout.itemlist_categoria,
+                                categoriaLista, CategoriaLista.this, db);
                             recyclerView.setAdapter(categoriaAdapter);
                         }
                     }

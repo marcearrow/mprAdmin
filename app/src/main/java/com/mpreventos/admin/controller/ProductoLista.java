@@ -57,7 +57,8 @@ public class ProductoLista extends AppCompatActivity {
 
     private void obtenerProductos() {
         try {
-            db.child(PRODUCTO_CHILD).getRef().addValueEventListener(new ValueEventListener() {
+            db = db.child(PRODUCTO_CHILD);
+            db.getRef().addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
@@ -72,7 +73,8 @@ public class ProductoLista extends AppCompatActivity {
                                 String descripcion = Funciones.asignarValor(ds.child("descripcion").getValue().toString());
                                 productoLista.add(new Producto(id, nombre, descripcion, imgUrl));
                             }
-                            productoAdapter = new ProductoAdapter(R.layout.itemlist_producto, productoLista, getApplicationContext());
+                            productoAdapter = new ProductoAdapter(R.layout.itemlist_producto,
+                                productoLista, ProductoLista.this, db);
                             recyclerView.setAdapter(productoAdapter);
                         }
                     }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,9 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.firebase.database.DatabaseReference;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.controller.TematicaAdd;
 import com.mpreventos.admin.model.Tematica;
+import com.mpreventos.admin.utils.DialogAlertDelete;
 import com.mpreventos.admin.utils.ImageLoader;
 import java.util.ArrayList;
 
@@ -23,11 +26,14 @@ public class TematicaAdapter extends RecyclerView.Adapter<TematicaAdapter.viewHo
   private int resource;
   private ArrayList<Tematica> temacaLista;
   private Context context;
+  private DatabaseReference ds;
 
-  public TematicaAdapter(int resource, ArrayList<Tematica> temacaLista, Context context) {
+  public TematicaAdapter(int resource, ArrayList<Tematica> temacaLista, Context context,
+      DatabaseReference ds) {
     this.resource = resource;
     this.temacaLista = temacaLista;
     this.context = context;
+    this.ds = ds;
   }
 
   @NonNull
@@ -63,7 +69,15 @@ public class TematicaAdapter extends RecyclerView.Adapter<TematicaAdapter.viewHo
         }
       });
     }
-
+    holder.cardView.setOnLongClickListener(new OnLongClickListener() {
+      @Override
+      public boolean onLongClick(View view) {
+        DialogAlertDelete dialogAlertDelete = new DialogAlertDelete(context, "esta temática", ds,
+            tematica.getId());
+        dialogAlertDelete.CreateDeleteDialog();
+        return false;
+      }
+    });
   }
 
   @Override

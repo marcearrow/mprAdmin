@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,9 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.firebase.database.DatabaseReference;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.controller.CategoriaAdd;
 import com.mpreventos.admin.model.Categoria;
+import com.mpreventos.admin.utils.DialogAlertDelete;
 import com.mpreventos.admin.utils.ImageLoader;
 import java.util.ArrayList;
 
@@ -23,11 +26,14 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.view
   private int resource;
     private ArrayList<Categoria> categoriaLista;
     private Context context;
+  private DatabaseReference ds;
 
-    public CategoriaAdapter(int resource, ArrayList<Categoria> categoriaLista, Context context) {
+  public CategoriaAdapter(int resource, ArrayList<Categoria> categoriaLista, Context context,
+      DatabaseReference ds) {
         this.resource = resource;
         this.categoriaLista = categoriaLista;
         this.context = context;
+    this.ds = ds;
     }
 
     @NonNull
@@ -64,6 +70,15 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.view
                 v.getContext().startActivity(intent);
             }
         });
+      holder.cardView.setOnLongClickListener(new OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View view) {
+          DialogAlertDelete dialogAlertDelete = new DialogAlertDelete(context, "esta categoría", ds,
+              categoria.getId());
+          dialogAlertDelete.CreateDeleteDialog();
+          return false;
+        }
+      });
     }
 
     @Override

@@ -12,9 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.firebase.database.DatabaseReference;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.controller.EventoAdd;
 import com.mpreventos.admin.model.Evento;
+import com.mpreventos.admin.utils.DialogAlertDelete;
 import com.mpreventos.admin.utils.ImageLoader;
 import java.util.ArrayList;
 
@@ -23,11 +25,14 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.viewHolder
     private int resource;
     private ArrayList<Evento> eventoLista;
     private Context context;
+    private DatabaseReference ds;
 
-    public EventoAdapter(int resource, ArrayList<Evento> eventoLista, Context context) {
+    public EventoAdapter(int resource, ArrayList<Evento> eventoLista, Context context,
+        DatabaseReference ds) {
         this.resource = resource;
         this.eventoLista = eventoLista;
         this.context = context;
+        this.ds = ds;
     }
 
     @NonNull
@@ -65,7 +70,9 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.viewHolder
             holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    //Dialog();
+                    DialogAlertDelete dialogAlertDelete = new DialogAlertDelete(context,
+                        "este evento", ds, evento.getId());
+                    dialogAlertDelete.CreateDeleteDialog();
                     return false;
                 }
             });

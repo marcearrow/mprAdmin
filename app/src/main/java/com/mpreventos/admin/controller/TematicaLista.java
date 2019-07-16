@@ -57,7 +57,8 @@ public class TematicaLista extends AppCompatActivity {
 
     private void obtenerTematicas() {
         try {
-            db.child(TEMATICA_CHILD).getRef().addValueEventListener(new ValueEventListener() {
+            db = db.child(TEMATICA_CHILD);
+            db.getRef().addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.exists()) {
@@ -70,7 +71,8 @@ public class TematicaLista extends AppCompatActivity {
                                 String id = ds.child("id").getValue().toString();
                                 tematicaLista.add(new Tematica(id, nombre, imgUrl));
                             }
-                            tematicaAdapter = new TematicaAdapter(R.layout.itemlist_tematica, tematicaLista, getApplicationContext());
+                            tematicaAdapter = new TematicaAdapter(R.layout.itemlist_tematica,
+                                tematicaLista, TematicaLista.this, db);
                             recyclerView.setAdapter(tematicaAdapter);
                         }
                     }

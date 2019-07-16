@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,9 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.firebase.database.DatabaseReference;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.controller.ProductoAdd;
 import com.mpreventos.admin.model.Producto;
+import com.mpreventos.admin.utils.DialogAlertDelete;
 import com.mpreventos.admin.utils.ImageLoader;
 import java.util.ArrayList;
 
@@ -23,11 +26,14 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.viewHo
   private int resource;
   private ArrayList<Producto> productoLista;
   private Context context;
+  private DatabaseReference ds;
 
-  public ProductoAdapter(int resource, ArrayList<Producto> productoLista, Context context) {
+  public ProductoAdapter(int resource, ArrayList<Producto> productoLista, Context context,
+      DatabaseReference ds) {
     this.resource = resource;
     this.productoLista = productoLista;
     this.context = context;
+    this.ds = ds;
   }
 
   @NonNull
@@ -62,6 +68,15 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.viewHo
         }
       });
     }
+    holder.cardView.setOnLongClickListener(new OnLongClickListener() {
+      @Override
+      public boolean onLongClick(View view) {
+        DialogAlertDelete dialogAlertDelete = new DialogAlertDelete(context, "este producto", ds,
+            producto.getId());
+        dialogAlertDelete.CreateDeleteDialog();
+        return false;
+      }
+    });
   }
 
   @Override
