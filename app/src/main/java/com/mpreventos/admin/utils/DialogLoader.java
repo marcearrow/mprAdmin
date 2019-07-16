@@ -7,8 +7,8 @@ import com.mpreventos.admin.R;
 
 public class DialogLoader {
 
-  Dialog dialog;
-  Context context;
+  private Dialog dialog;
+  private Context context;
 
   public DialogLoader(Context context) {
     this.context = context;

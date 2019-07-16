@@ -43,7 +43,7 @@ public class EventoAdd extends AppCompatActivity {
   private Button modButton;
   private Boolean estado;
   private Uri uri;
-  DialogLoader dialogLoader;
+  private DialogLoader dialogLoader;
 
 
   @Override

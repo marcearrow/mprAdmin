@@ -7,9 +7,9 @@ import com.mpreventos.admin.R;
 
 public class DialogAlertSpinner {
 
-  Context context;
-  String title;
-  String mensaje;
+  private Context context;
+  private String title;
+  private String mensaje;
 
   public DialogAlertSpinner(Context context) {
     this.context = context;

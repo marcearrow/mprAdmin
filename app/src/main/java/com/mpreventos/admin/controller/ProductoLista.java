@@ -16,7 +16,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.adapter.ProductoAdapter;
-import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.model.Producto;
 import com.mpreventos.admin.utils.Funciones;
 import java.util.ArrayList;
@@ -25,12 +24,11 @@ public class ProductoLista extends AppCompatActivity {
 
     private static final String PRODUCTO_CHILD = "productos";
     private DatabaseReference db;
-    private FirebaseHelper firebaseHelper;
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
     private ProductoAdapter productoAdapter;
     private ArrayList<Producto> productoLista = new ArrayList<>();
-    ProgressBar loader;
+  private ProgressBar loader;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -14,20 +14,15 @@ public class Funciones {
         return estado;
     }
 
-    public String setImg(String imgUrl, ImageView imageView, Context context) {
+  public void setImg(String imgUrl, ImageView imageView, Context context) {
         if (imgUrl != null) {
             try {
                 ImageLoader imageLoader = new ImageLoader(context);
                 imageLoader.setImgWithGlide(imgUrl, imageView);
-                error = "la imagen se cargo exitosamente";
-            } catch (Exception ex) {
-                error = ex.toString();
+            } catch (Exception ignored) {
 
             }
-        } else {
-            error = "no se pudo cargar la imagen";
         }
-        return error;
     }
 
     public static String asignarValor(String texto) {

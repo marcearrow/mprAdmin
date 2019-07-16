@@ -16,18 +16,16 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.adapter.TematicaAdapter;
-import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.model.Tematica;
 import java.util.ArrayList;
 
 public class TematicaLista extends AppCompatActivity {
     private static final String TEMATICA_CHILD = "tematicas";
     private DatabaseReference db;
-    private FirebaseHelper firebaseHelper;
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
     private TematicaAdapter tematicaAdapter;
-    ProgressBar loader;
+  private ProgressBar loader;
 
     private ArrayList<Tematica> tematicaLista = new ArrayList<>();
 

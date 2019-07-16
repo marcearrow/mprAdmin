@@ -13,10 +13,11 @@
     <ImageView
       android:id="@+id/imageViewProducto"
       android:layout_width="194dp"
+      android:layout_height="259dp"
       android:adjustViewBounds="false"
+      android:contentDescription="@string/accesibilidad_producto"
       android:nestedScrollingEnabled="false"
-      android:scaleType="fitXY"
-      android:layout_height="259dp"/>
+      android:scaleType="fitXY"/>
 
     <LinearLayout
       android:layout_width="match_parent"

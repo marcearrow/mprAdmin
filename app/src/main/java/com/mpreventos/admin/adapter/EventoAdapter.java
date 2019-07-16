@@ -1,6 +1,5 @@
 package com.mpreventos.admin.adapter;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -9,17 +8,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.controller.EventoAdd;
 import com.mpreventos.admin.model.Evento;
 import com.mpreventos.admin.utils.ImageLoader;
-
 import java.util.ArrayList;
 
 public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.viewHolderEventos> {
@@ -97,10 +93,4 @@ public class EventoAdapter extends RecyclerView.Adapter<EventoAdapter.viewHolder
         }
     }
 
-    public void Dialog() {
-
-        AlertDialog.Builder dialogAlert = new AlertDialog.Builder(context);
-        dialogAlert.setTitle("Demo ?");
-        dialogAlert.show();
-    }
 }

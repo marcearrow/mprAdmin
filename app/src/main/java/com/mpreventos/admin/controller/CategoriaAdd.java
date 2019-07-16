@@ -146,7 +146,7 @@ public class CategoriaAdd extends AppCompatActivity {
             } else {
               ArrayList<String> lista = new ArrayList<>();
               lista.add("Seleccione una opción...");
-              ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
+              ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
                   android.R.layout.simple_list_item_1, lista);
               spinnerTematica.setAdapter(adapter);
             }

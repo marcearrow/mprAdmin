@@ -30,4 +30,7 @@
     <string name="nombre_producto">Nombre producto:</string>
     <string name="descripcion_producto">Descripción producto:</string>
     <string name="seleccionar_evento">Seleccionar evento:</string>
+  <string name="accesibilidad_producto">Imagen de un producto</string>
+  <string name="dialog_cargandodatos">Se estan cargando los datos</string>
+  <string name="dialog_espere">Por favor espere..</string>
 </resources>

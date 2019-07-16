@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +28,7 @@ import com.google.firebase.storage.UploadTask;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.helper.StorageHelper;
+import com.mpreventos.admin.model.Categoria;
 import com.mpreventos.admin.model.Evento;
 import com.mpreventos.admin.model.Producto;
 import com.mpreventos.admin.model.Tematica;
@@ -34,6 +36,7 @@ import com.mpreventos.admin.utils.DialogAlertSpinner;
 import com.mpreventos.admin.utils.DialogLoader;
 import com.mpreventos.admin.utils.Funciones;
 import com.mpreventos.admin.utils.Spinnerloaders;
+import com.mpreventos.admin.utils.Spinnerloaders.SpinnerAdapterCallbackCategorias;
 import java.util.ArrayList;
 
 public class ProductoAdd extends AppCompatActivity {
@@ -94,60 +97,107 @@ public class ProductoAdd extends AppCompatActivity {
       setTitle("Agregar producto");
     }
 
-    //TODO: MODIFICAR PRODUCTO Y LOS SPINNER CORRESPONDIENTES ADEMAS DE LUEGO INTENTAR OPTIMIZAR
     final Spinnerloaders spinnerloaders = new Spinnerloaders(this);
     spinnerloaders.adapterEventos(new Spinnerloaders.SpinnerAdaperCallbackEventos() {
 
       @Override
-      public void callbackEventos(ArrayAdapter<String> adapter, ArrayList<Evento> eventoArrayList) {
+      public void callbackEventos(final ArrayAdapter<String> adapter,
+          final ArrayList<Evento> eventoArrayList) {
         spinnerEvento.setAdapter(adapter);
+
         spinnerEvento.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
           @Override
           public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             String item = parent.getItemAtPosition(position).toString();
-            getItemName(item);
+            if (!item.equals("Seleccione una opción...")) {
 
-            spinnerTematica.setAdapter(null);
-            spinnerCategoria.setAdapter(null);
-            if (!nombre.equals("Seleccione una opción...")) {
-              spinnerloaders
-                  .adapterTematicas(new Spinnerloaders.SpinnerAdapterCallbackTematicas() {
+              spinnerTematica.setAdapter(null);
+              spinnerCategoria.setAdapter(null);
+              if (eventoArrayList.get(position - 1).getNombre().equals(item)) {
+                getItemName(eventoArrayList.get(position - 1).getId());
 
-                    @Override
-                    public void callbackTematicas(ArrayAdapter<String> adapter2,
-                        ArrayList<Tematica> listaTematicas) {
-                      spinnerTematica.setAdapter(adapter2);
-                    }
-                  }, nombre);
+                spinnerloaders
+                    .adapterTematicas(new Spinnerloaders.SpinnerAdapterCallbackTematicas() {
 
-              spinnerTematica
-                  .setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view,
-                        int position, long id) {
-                      String item = parent.getItemAtPosition(position).toString();
-                      getItemName(item);
-                      if (!nombre.equals("Seleccione una opción...")) {
-                       /* spinnerloaders.adapterCategorias(
-                            new Spinnerloaders.SpinnerAdapterCallbackCategorias() {
+                      @Override
+                      public void callbackTematicas(ArrayAdapter<String> adapter2,
+                          final ArrayList<Tematica> listaTematicas) {
+                        spinnerTematica.setAdapter(adapter2);
+
+                        spinnerTematica
+                            .setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                               @Override
-                              public void callbackCategorias(
-                                  ArrayAdapter<String> adapter) {
-                                spinnerCategoria.setAdapter(adapter);
+                              public void onItemSelected(final AdapterView<?> parent, View view,
+                                  int position,
+                                  long id) {
+                                String item = parent.getItemAtPosition(position).toString();
+                                if (!item.equals("Seleccione una opción...") && !item
+                                    .equals("No se encontró ninguna temática")) {
+                                  if (listaTematicas.get(position).getNombre().equals(item)) {
+                                    getItemName(listaTematicas.get(position).getId());
+
+                                    spinnerloaders.adapterCategorias(
+                                        new SpinnerAdapterCallbackCategorias() {
+                                          @Override
+                                          public void callbackCategorias(
+                                              ArrayAdapter<String> adapter3,
+                                              final ArrayList<Categoria> listaCategorias) {
+                                            spinnerCategoria.setAdapter(adapter3);
+
+                                            spinnerCategoria.setOnItemSelectedListener(
+                                                new OnItemSelectedListener() {
+                                                  @Override
+                                                  public void onItemSelected(
+                                                      AdapterView<?> adapterView, View view, int i,
+                                                      long l) {
+                                                    String item = adapterView.getItemAtPosition(i)
+                                                        .toString();
+                                                    //no se encontro ninguna
+                                                    if (!parent.getItemAtPosition(0).toString()
+                                                        .equals("No se encontró ninguna temática")
+                                                        && !item.equals(
+                                                        "No se encontró ninguna categoría")) {
+                                                      if (listaCategorias.get(i).getNombre()
+                                                          .equals(item)) {
+                                                        getItemName(listaCategorias.get(i).getId());
+                                                      }
+                                                    }
+
+                                                  }
+
+                                                  @Override
+                                                  public void onNothingSelected(
+                                                      AdapterView<?> adapterView) {
+
+                                                  }
+                                                });
+                                          }
+                                        }, nombre);
+                                  }
+                                } else {
+                                  ArrayList<String> lista = new ArrayList<>();
+                                  lista.add("No se encontró ninguna categoría");
+                                  ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                                      getApplicationContext(),
+                                      android.R.layout.simple_list_item_1, lista);
+                                  spinnerCategoria.setAdapter(adapter);
+                                }
                               }
-                            }, nombre);*/
+
+                              @Override
+                              public void onNothingSelected(AdapterView<?> parent) {
+
+                              }
+                            });
                       }
-                    }
+                    }, nombre);
 
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
+              }
 
-                    }
-                  });
             } else {
               ArrayList<String> lista = new ArrayList<>();
               lista.add("Seleccione una opción...");
-              ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
+              ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
                   android.R.layout.simple_list_item_1, lista);
               spinnerTematica.setAdapter(adapter);
               spinnerCategoria.setAdapter(adapter);

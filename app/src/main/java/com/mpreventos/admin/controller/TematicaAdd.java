@@ -51,7 +51,7 @@ public class TematicaAdd extends AppCompatActivity {
   private Button modButton;
   private Boolean estado;
   private Spinner spinner;
-  String nombre;
+  private String nombre;
   private DialogLoader dialogLoader = null;
 
 
@@ -67,30 +67,7 @@ public class TematicaAdd extends AppCompatActivity {
     modButton = findViewById(R.id.btAddTematica);
     spinner = findViewById(R.id.spinnerTematicaEvento);
 
-    if (getIntent() != null && getIntent().getExtras() != null) {
 
-      id = getIntent().getStringExtra("id");
-      setTitle("Modificar temática");
-
-      modButton.setText(R.string.modificar);
-      mDataBase.child(id).addValueEventListener(new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-          nombreTematica.setText(dataSnapshot.child("nombre").getValue().toString());
-          imgUrl = dataSnapshot.child("imgUrl").getValue().toString();
-          Funciones funciones = new Funciones();
-          funciones.setImg(imgUrl, imagenTematica, getApplicationContext());
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-        }
-      });
-
-    } else {
-      setTitle("Agregar temática");
-    }
     final Spinnerloaders spinnerloaders = new Spinnerloaders(getBaseContext());
     spinnerloaders.adapterEventos(new Spinnerloaders.SpinnerAdaperCallbackEventos() {
       @Override
@@ -120,6 +97,44 @@ public class TematicaAdd extends AppCompatActivity {
 
     });
 
+    if (getIntent() != null && getIntent().getExtras() != null) {
+
+      id = getIntent().getStringExtra("id");
+      setTitle("Modificar temática");
+
+      modButton.setText(R.string.modificar);
+      mDataBase.child(id).addValueEventListener(new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+          nombreTematica.setText(dataSnapshot.child("nombre").getValue().toString());
+          imgUrl = dataSnapshot.child("imgUrl").getValue().toString();
+          Funciones funciones = new Funciones();
+          funciones.setImg(imgUrl, imagenTematica, getApplicationContext());
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+        }
+      });
+      //buscar si en todos los datasnapthop de eventosTematicas si existe con un true seleccionar ese item e el spinner opbeniendo el numero de ciclos
+      /*mDataBase.getRoot().child("eventoTematicas").addListenerForSingleValueEvent(
+          new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+              for (DataSnapshot ds: dataSnapshot.getChildren()) {
+                ds.getValue();
+              }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+          });*/
+    } else {
+      setTitle("Agregar temática");
+    }
   }
 
   private void getItemName(String item) {

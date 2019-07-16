@@ -22,7 +22,7 @@ public class SignInActivity extends AppCompatActivity {
   private FirebaseAuth mAuth;
   private EditText mEmail;
   private EditText mPassword;
-  Button sigin;
+  private Button sigin;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +47,7 @@ public class SignInActivity extends AppCompatActivity {
   }
 
   //iniciar sesion
-  public void iniciarSesion(String email, String password) {
+  private void iniciarSesion(String email, String password) {
     //comprobar si los campos estan vacios
     if (Funciones.validarTexto(email) && Funciones.validarTexto(password)) {
       mEmail.setError(getString(R.string.empyEmail));

@@ -16,7 +16,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.adapter.CategoriaAdapter;
-import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.model.Categoria;
 import java.util.ArrayList;
 
@@ -24,12 +23,11 @@ public class CategoriaLista extends AppCompatActivity {
 
     private static final String CATEGORIA_CHILD = "categorias";
     private DatabaseReference db;
-    private FirebaseHelper firebaseHelper;
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
     private CategoriaAdapter categoriaAdapter;
     private ArrayList<Categoria> categoriaLista = new ArrayList<>();
-    ProgressBar loader;
+  private ProgressBar loader;
 
 
 

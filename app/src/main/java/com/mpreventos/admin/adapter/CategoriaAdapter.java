@@ -8,22 +8,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.controller.CategoriaAdd;
 import com.mpreventos.admin.model.Categoria;
 import com.mpreventos.admin.utils.ImageLoader;
-
 import java.util.ArrayList;
 
 public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.viewHolderCategoria> {
 
-    private int resource;
+  private int resource;
     private ArrayList<Categoria> categoriaLista;
     private Context context;
 

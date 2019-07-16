@@ -17,7 +17,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.adapter.EventoAdapter;
-import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.model.Evento;
 import java.util.ArrayList;
 
@@ -26,11 +25,10 @@ public class EventoLista extends AppCompatActivity {
     private static final String EVENT_CHILD = "eventos";
     private static final String TAG = "firebaselistaconeccion";
     private DatabaseReference db;
-    private FirebaseHelper firebaseHelper;
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
-    public EventoAdapter eventoAdapter;
-    ProgressBar loader;
+  private EventoAdapter eventoAdapter;
+  private ProgressBar loader;
 
 
     private ArrayList<Evento> eventoLista = new ArrayList<>();
@@ -63,7 +61,7 @@ public class EventoLista extends AppCompatActivity {
 
     }
 
-    public void obtenerEventos() {
+  private void obtenerEventos() {
         try {
             db.child(EVENT_CHILD).getRef().addValueEventListener(new ValueEventListener() {
                 @Override

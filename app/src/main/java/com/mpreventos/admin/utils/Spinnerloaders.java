@@ -10,13 +10,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.helper.FirebaseHelper.FirebaseEventosListaCallback;
+import com.mpreventos.admin.model.Categoria;
 import com.mpreventos.admin.model.Evento;
 import com.mpreventos.admin.model.Tematica;
 import java.util.ArrayList;
 
 public class Spinnerloaders {
 
-  private static final String TAG = "spinnerloader";
+
   private Context context;
   private ArrayAdapter<String> adapter;
 
@@ -105,7 +106,7 @@ public class Spinnerloaders {
 
   }
 
- /* public void adapterCategorias(
+  public void adapterCategorias(
       final SpinnerAdapterCallbackCategorias spinnerAdapterCallbackCategorias, String tematica) {
     DatabaseReference tematicasCategorias = FirebaseDatabase.getInstance()
         .getReference("tematicaCategorias").child(tematica);
@@ -127,25 +128,32 @@ public class Spinnerloaders {
           }
 
           if (lista.size() > 0) {
-            firebaseHelperCategorias.TematicasNombre(new FirebaseHelper.FirebaseCategoriasListaCallback() {
-              @Override
-              public void onCallback(ArrayList<Categoria> listaDeCategorias) {
-                ArrayList<String> lista = new ArrayList<>();
-                for (Categoria categoria :
-                    listaDeCategorias) {
-                  lista.add(categoria.getNombre());
-                }
-                adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_activated_1,
-                    lista);
-                spinnerAdapterCallbackCategorias.callbackCategorias(adapter);
-              }
-            }, lista);
+            firebaseHelperCategorias
+                .CategoriasNombre(new FirebaseHelper.FirebaseCategoriasListaCallback() {
+                  @Override
+                  public void onCallback(ArrayList<Categoria> listaDeCategorias) {
+                    ArrayList<String> lista = new ArrayList<>();
+                    for (Categoria categoria :
+                        listaDeCategorias) {
+                      lista.add(categoria.getNombre());
+                    }
+                    adapter = new ArrayAdapter<>(context,
+                        android.R.layout.simple_list_item_activated_1,
+                        lista);
+                    spinnerAdapterCallbackCategorias.callbackCategorias(adapter, listaDeCategorias);
+                  }
+                }, lista);
+          } else {
+            lista.add(0, "No se encontró ninguna categoría");
+            adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_activated_1,
+                lista);
+            spinnerAdapterCallbackCategorias.callbackCategorias(adapter, null);
           }
         } else {
           lista.add(0, "No se encontró ninguna categoría");
           adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_activated_1,
               lista);
-          spinnerAdapterCallbackCategorias.callbackCategorias(adapter);
+          spinnerAdapterCallbackCategorias.callbackCategorias(adapter, null);
         }
       }
 
@@ -153,7 +161,8 @@ public class Spinnerloaders {
       public void onCancelled(@NonNull DatabaseError databaseError) {
 
       }
-    });*/
+    });
+  }
 
 
   public interface SpinnerAdaperCallbackEventos {
@@ -169,7 +178,7 @@ public class Spinnerloaders {
 
   public interface SpinnerAdapterCallbackCategorias {
 
-    void callbackCategorias(ArrayAdapter<String> adapter);
+    void callbackCategorias(ArrayAdapter<String> adapter, ArrayList<Categoria> listaCategorias);
   }
 
 
