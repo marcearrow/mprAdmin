@@ -42,7 +42,7 @@ public class DialogAlertDelete {
 
         StorageHelper storageHelper = new StorageHelper(storageReference);
         storageHelper.DeleteStorage();
-        boolean estado = firebaseHelper.EliminarNodoFirebase(nombre);
+        boolean estado = firebaseHelper.EliminarNodoFirebase(nombre, ds.getKey());
 
         if (estado) {
           Toast.makeText(context, "Eliminado exitosamente", Toast.LENGTH_SHORT).show();

@@ -56,12 +56,32 @@ public class FirebaseHelper {
   }
 
   //Eliminar item
-  public Boolean EliminarNodoFirebase(String key) {
+  public Boolean EliminarNodoFirebase(String key, String relacion) {
+
     if (db == null) {
       estado = false;
     } else {
       try {
-        db.child(key).removeValue();
+        switch (relacion) {
+          case "eventos":
+            db.getRoot().child("eventoTematicas").child(key).removeValue();
+            db.child(key).removeValue();
+            break;
+          case "tematicas":
+            db.getRoot().child("tematicaCategorias").child(key).removeValue();
+            db.child(key).removeValue();
+            BuscarDatosParaEliminar(db.getRoot().child("eventoTematicas"), key);
+            break;
+          case "categorias":
+            db.getRoot().child("categoriaProducto").child(key).removeValue();
+            db.child(key).removeValue();
+            BuscarDatosParaEliminar(db.getRoot().child("tematicaCategorias"), key);
+            break;
+          case "productos":
+            db.child(key).removeValue();
+            BuscarDatosParaEliminar(db.getRoot().child("categoriaProducto"), key);
+            break;
+        }
         estado = true;
       } catch (DatabaseException ex) {
         ex.getStackTrace();
@@ -170,6 +190,26 @@ public class FirebaseHelper {
         }
       });
     }
+  }
+
+  private void BuscarDatosParaEliminar(DatabaseReference databaseReference, String key) {
+
+    databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+      @Override
+      public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        for (DataSnapshot ds :
+            dataSnapshot.getChildren()) {
+          if (ds.child(key).exists()) {
+            databaseReference.child(ds.getKey()).child(key).removeValue();
+          }
+        }
+      }
+
+      @Override
+      public void onCancelled(@NonNull DatabaseError databaseError) {
+
+      }
+    });
   }
 
   public interface FirebaseEventosListaCallback {
