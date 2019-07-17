@@ -13,8 +13,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -49,7 +47,6 @@ public class TematicaAdd extends AppCompatActivity {
   private String imgUrl;
   private String id;
   private Button modButton;
-  private Boolean estado;
   private Spinner spinner;
   private String nombre;
   private DialogLoader dialogLoader = null;
@@ -118,20 +115,8 @@ public class TematicaAdd extends AppCompatActivity {
         }
       });
       //buscar si en todos los datasnapthop de eventosTematicas si existe con un true seleccionar ese item e el spinner opbeniendo el numero de ciclos
-      /*mDataBase.getRoot().child("eventoTematicas").addListenerForSingleValueEvent(
-          new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-              for (DataSnapshot ds: dataSnapshot.getChildren()) {
-                ds.getValue();
-              }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-          });*/
+      FirebaseHelper helper = new FirebaseHelper(mDataBase);
+      helper.BuscarDatos(id, "eventoTematicas");
     } else {
       setTitle("Agregar temática");
     }
@@ -182,7 +167,7 @@ public class TematicaAdd extends AppCompatActivity {
             tematica = new Tematica(id, nombreTematica.getText().toString(), LOADING_IMAGE_URL);
           }
 
-          estado = firebaseHelper.guardarDatosFirebase(tematica, id);
+          Boolean estado = firebaseHelper.guardarDatosFirebase(tematica, id);
 
           if (!estado) {
             ErrorMensaje();
@@ -197,31 +182,24 @@ public class TematicaAdd extends AppCompatActivity {
             UploadTask task = storageHelper.uploadImage(uri);
 
             Task<Uri> urlTask = task
-                .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                  @Override
-                  public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task)
-                      throws Exception {
-                    if (!task.isSuccessful()) {
-                      ErrorMensaje();
-                      throw task.getException();
-                    }// Continue with the task to get the download URL
-                    return storageReference.getDownloadUrl();
-                  }
-                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                  @Override
-                  public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()) {
+                .continueWithTask(task1 -> {
+                  if (!task1.isSuccessful()) {
+                    ErrorMensaje();
+                    throw task1.getException();
+                  }// Continue with the task to get the download URL
+                  return storageReference.getDownloadUrl();
+                }).addOnCompleteListener(task12 -> {
+                  if (task12.isSuccessful()) {
 
-                      Uri downloadUri = task.getResult();
-                      tematica = new Tematica(id, nombreTematica.getText().toString(),
-                          downloadUri.toString());
-                      firebaseHelper.guardarDatosFirebase(tematica, tematica.getId());
-                      firebaseHelper.EventosTematicas(tematica, nombre);
-                      SuccesMensaje();
-                      finish();
-                    } else {
-                      ErrorMensaje();
-                    }
+                    Uri downloadUri = task12.getResult();
+                    tematica = new Tematica(id, nombreTematica.getText().toString(),
+                        downloadUri.toString());
+                    firebaseHelper.guardarDatosFirebase(tematica, tematica.getId());
+                    firebaseHelper.EventosTematicas(tematica, nombre);
+                    SuccesMensaje();
+                    finish();
+                  } else {
+                    ErrorMensaje();
                   }
                 });
           }
@@ -248,7 +226,11 @@ public class TematicaAdd extends AppCompatActivity {
   }
 
   private void SuccesMensaje() {
-    Toast.makeText(this, "Temática agregada exitosamente", Toast.LENGTH_SHORT).show();
+    if (modButton.getText().toString().toLowerCase().equals("modificar")) {
+      Toast.makeText(this, "Temática modificada exitosamente", Toast.LENGTH_SHORT).show();
+    } else {
+      Toast.makeText(this, "Temática agregada exitosamente", Toast.LENGTH_SHORT).show();
+    }
     dialogLoader.DismisDialog();
   }
 
@@ -266,6 +248,5 @@ public class TematicaAdd extends AppCompatActivity {
     super.finish();
   }
 
-  //TODO: Arreglar las listas ver mensajes todo revisar todo una vez mas
 }
 

@@ -1,5 +1,6 @@
 package com.mpreventos.admin.helper;
 
+import android.util.Log;
 import androidx.annotation.NonNull;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -201,6 +202,32 @@ public class FirebaseHelper {
             dataSnapshot.getChildren()) {
           if (ds.child(key).exists()) {
             databaseReference.child(ds.getKey()).child(key).removeValue();
+          }
+        }
+      }
+
+      @Override
+      public void onCancelled(@NonNull DatabaseError databaseError) {
+
+      }
+    });
+  }
+
+  public void BuscarDatos(String key, String relacion) {
+    final String TAG = "firebasedatalog";
+    Log.d(TAG, "BuscarDatos:  HOLA");
+    Log.d(TAG, "BuscarDatos: " + db.getRoot().child(relacion));
+
+    db.getRoot().child(relacion).addListenerForSingleValueEvent(new ValueEventListener() {
+      @Override
+      public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        for (DataSnapshot ds :
+            dataSnapshot.getChildren()) {
+          if (ds.child(key).exists()) {
+            Log.d(TAG, "onDataChange: DS: EXISTE:");
+
+          } else {
+            Log.d(TAG, "onDataChange: DS: NO EXISTE:");
           }
         }
       }

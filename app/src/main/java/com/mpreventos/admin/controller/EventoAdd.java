@@ -167,7 +167,12 @@ public class EventoAdd extends AppCompatActivity {
   }
 
   private void SuccesMensaje() {
-    Toast.makeText(this, "Evento agregado exitosamente", Toast.LENGTH_SHORT).show();
+    if (modButton.getText().toString().toLowerCase().equals("modificar")) {
+      Toast.makeText(this, "Evento modificado exitosamente", Toast.LENGTH_SHORT).show();
+    } else {
+      Toast.makeText(this, "Evento agregado exitosamente", Toast.LENGTH_SHORT).show();
+    }
+
     dialogLoader.DismisDialog();
   }
 
