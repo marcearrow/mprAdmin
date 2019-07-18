@@ -13,8 +13,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,8 +26,6 @@ import com.mpreventos.admin.R;
 import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.helper.StorageHelper;
 import com.mpreventos.admin.model.Categoria;
-import com.mpreventos.admin.model.Evento;
-import com.mpreventos.admin.model.Tematica;
 import com.mpreventos.admin.utils.DialogAlertSpinner;
 import com.mpreventos.admin.utils.DialogLoader;
 import com.mpreventos.admin.utils.Funciones;
@@ -44,13 +40,11 @@ public class CategoriaAdd extends AppCompatActivity {
   private DatabaseReference mDataBase;
   private ImageView imagenCategoria;
   private EditText nombreCategoria;
-  private EditText descripcionCategoria;
   private FirebaseHelper firebaseHelper;
   private Categoria categoria;
   private String imgUrl;
   private String id;
   private Button modButton;
-  private Boolean estado;
   private Uri uri;
   private String nombre;
   private DialogLoader dialogLoader;
@@ -64,7 +58,6 @@ public class CategoriaAdd extends AppCompatActivity {
     mDataBase = FirebaseDatabase.getInstance().getReference(CATEGORIAS_CHILD);
 
     nombreCategoria = findViewById(R.id.editNombreCategoria);
-    descripcionCategoria = findViewById(R.id.editDescripcionCategoria);
     imagenCategoria = findViewById(R.id.imgCategoria);
     modButton = findViewById(R.id.btAddCategoria);
     final Spinner spinnerEvento = findViewById(R.id.spinnerCategoriaEvento);
@@ -80,7 +73,6 @@ public class CategoriaAdd extends AppCompatActivity {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
           nombreCategoria.setText(dataSnapshot.child("nombre").getValue().toString());
-          descripcionCategoria.setText(dataSnapshot.child("categoria").getValue().toString());
           imgUrl = dataSnapshot.child("imgUrl").getValue().toString();
           Funciones funciones = new Funciones();
           funciones.setImg(imgUrl, imagenCategoria, getApplicationContext());
@@ -96,71 +88,61 @@ public class CategoriaAdd extends AppCompatActivity {
     }
 
     final Spinnerloaders spinnerloaders = new Spinnerloaders(getBaseContext());
-    spinnerloaders.adapterEventos(new Spinnerloaders.SpinnerAdaperCallbackEventos() {
-      @Override
-      public void callbackEventos(final ArrayAdapter<String> adapter,
-          final ArrayList<Evento> listaEventos) {
-        spinnerEvento.setAdapter(adapter);
+    spinnerloaders.adapterEventos((adapter, listaEventos) -> {
+      spinnerEvento.setAdapter(adapter);
 
-        spinnerEvento.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-          @Override
-          public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            String item = parent.getItemAtPosition(position).toString();
-            if (!item.equals("Seleccione una opción...")) {
-              spinnerTematica.setAdapter(null);
-              if (listaEventos.get(position - 1).getNombre().equals(item)) {
-                getItemName(listaEventos.get(position - 1).getId());
+      spinnerEvento.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+          String item = parent.getItemAtPosition(position).toString();
+          if (!item.equals("Seleccione una opción...")) {
+            spinnerTematica.setAdapter(null);
+            if (listaEventos.get(position - 1).getNombre().equals(item)) {
+              getItemName(listaEventos.get(position - 1).getId());
 
-                spinnerloaders
-                    .adapterTematicas(new Spinnerloaders.SpinnerAdapterCallbackTematicas() {
+              spinnerloaders
+                  .adapterTematicas((adapter2, listaTematicas) -> {
+                    spinnerTematica.setAdapter(adapter2);
 
-                      @Override
-                      public void callbackTematicas(ArrayAdapter<String> adapter2,
-                          final ArrayList<Tematica> listaTematicas) {
-                        spinnerTematica.setAdapter(adapter2);
-
-                        spinnerTematica
-                            .setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                              @Override
-                              public void onItemSelected(AdapterView<?> parent, View view,
-                                  int position,
-                                  long id) {
-                                String item = parent.getItemAtPosition(position).toString();
-                                if (!item.equals("Seleccione una opción...")) {
-                                  if (listaTematicas.get(position).getNombre().equals(item)) {
-                                    getItemName(listaTematicas.get(position).getId());
-                                  }
-                                }
+                    spinnerTematica
+                        .setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                          @Override
+                          public void onItemSelected(AdapterView<?> parent1, View view1,
+                              int position1,
+                              long id1) {
+                            String item1 = parent1.getItemAtPosition(position1).toString();
+                            if (!item1.equals("Seleccione una opción...")) {
+                              if (listaTematicas.get(position1).getNombre().equals(item1)) {
+                                getItemName(listaTematicas.get(position1).getId());
                               }
+                            }
+                          }
 
-                              @Override
-                              public void onNothingSelected(AdapterView<?> parent) {
+                          @Override
+                          public void onNothingSelected(AdapterView<?> parent1) {
 
-                              }
-                            });
-                      }
-                    }, nombre);
+                          }
+                        });
+                  }, nombre);
 
 
-              }
-            } else {
-              ArrayList<String> lista = new ArrayList<>();
-              lista.add("Seleccione una opción...");
-              ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
-                  android.R.layout.simple_list_item_1, lista);
-              spinnerTematica.setAdapter(adapter);
             }
-
-
+          } else {
+            ArrayList<String> lista = new ArrayList<>();
+            lista.add("Seleccione una opción...");
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
+                android.R.layout.simple_list_item_1, lista);
+            spinnerTematica.setAdapter(adapter);
           }
 
-          @Override
-          public void onNothingSelected(AdapterView<?> parent) {
 
-          }
-        });
-      }
+        }
 
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+      });
     });
 
   }
@@ -183,15 +165,7 @@ public class CategoriaAdd extends AppCompatActivity {
 
         break;
       case R.id.btAddCategoria:
-        if (Funciones.validarTexto(nombreCategoria.getText().toString()) && Funciones
-            .validarTexto(descripcionCategoria.getText().toString())) {
-          nombreCategoria.setError("El nombre no debe estar vacío");
-          descripcionCategoria.setError("La descripción no puede estar vacía ");
-          break;
-        } else if (Funciones.validarTexto(descripcionCategoria.getText().toString())) {
-          descripcionCategoria.setError("La descripción no puede estar vacía ");
-          break;
-        } else if (Funciones.validarTexto(nombreCategoria.getText().toString())) {
+        if (Funciones.validarTexto(nombreCategoria.getText().toString())) {
           nombreCategoria.setError("El nombre no debe estar vacío");
           break;
         } else if (Funciones.validarTexto(nombre) || nombre.equals("Seleccione una opción...")
@@ -207,15 +181,14 @@ public class CategoriaAdd extends AppCompatActivity {
 
           firebaseHelper = new FirebaseHelper(mDataBase);
           if (modButton.getText().toString().toLowerCase().equals("modificar")) {
-            categoria = new Categoria(id, nombreCategoria.getText().toString(),
-                descripcionCategoria.getText().toString(), imgUrl);
+            categoria = new Categoria(id, nombreCategoria.getText().toString(), imgUrl, nombre);
 
           } else {
             id = firebaseHelper.getIdkey();
-            categoria = new Categoria(id, nombreCategoria.getText().toString(),
-                descripcionCategoria.getText().toString(), LOADING_IMAGE_URL);
+            categoria = new Categoria(id, nombreCategoria.getText().toString(), LOADING_IMAGE_URL,
+                nombre);
 
-            estado = firebaseHelper.guardarDatosFirebase(categoria, id);
+            Boolean estado = firebaseHelper.guardarDatosFirebase(categoria, id);
 
             if (!estado) {
               ErrorMensaje();
@@ -231,32 +204,25 @@ public class CategoriaAdd extends AppCompatActivity {
               UploadTask task = storageHelper.uploadImage(uri);
 
               Task<Uri> urlTask = task
-                  .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                    @Override
-                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task)
-                        throws Exception {
-                      if (!task.isSuccessful()) {
-                        ErrorMensaje();
-                        throw task.getException();
-                      }// Continue with the task to get the download URL
+                  .continueWithTask(task1 -> {
+                    if (!task1.isSuccessful()) {
+                      ErrorMensaje();
+                      throw task1.getException();
+                    }// Continue with the task to get the download URL
 
-                      return storageReference.getDownloadUrl();
-                    }
-                  }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
-                      if (task.isSuccessful()) {
+                    return storageReference.getDownloadUrl();
+                  }).addOnCompleteListener(task12 -> {
+                    if (task12.isSuccessful()) {
 
-                        Uri downloadUri = task.getResult();
-                        categoria = new Categoria(id, nombreCategoria.getText().toString(),
-                            descripcionCategoria.getText().toString(), downloadUri.toString());
-                        firebaseHelper.guardarDatosFirebase(categoria, categoria.getId());
-                        firebaseHelper.TematicaCategora(categoria, nombre);
-                        SuccesMensaje();
-                        finish();
-                      } else {
-                        ErrorMensaje();
-                      }
+                      Uri downloadUri = task12.getResult();
+                      categoria = new Categoria(id, nombreCategoria.getText().toString(),
+                          downloadUri.toString(), nombre);
+                      firebaseHelper.guardarDatosFirebase(categoria, categoria.getId());
+                      firebaseHelper.TematicaCategora(categoria, nombre);
+                      SuccesMensaje();
+                      finish();
+                    } else {
+                      ErrorMensaje();
                     }
                   });
             }

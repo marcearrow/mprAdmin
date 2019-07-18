@@ -69,7 +69,8 @@ public class TematicaLista extends AppCompatActivity {
                                 String nombre = ds.child("nombre").getValue().toString();
                                 String imgUrl = ds.child("imgUrl").getValue().toString();
                                 String id = ds.child("id").getValue().toString();
-                                tematicaLista.add(new Tematica(id, nombre, imgUrl));
+                                String idEvento = ds.child("evento").getValue().toString();
+                                tematicaLista.add(new Tematica(id, nombre, imgUrl, idEvento));
                             }
                             tematicaAdapter = new TematicaAdapter(R.layout.itemlist_tematica,
                                 tematicaLista, TematicaLista.this, db);

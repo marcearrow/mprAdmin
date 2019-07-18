@@ -149,7 +149,8 @@ public class FirebaseHelper {
             String nombre = ds.child("nombre").getValue().toString();
             String id = ds.child("id").getValue().toString();
             String imgUrl = ds.child("imgUrl").getValue().toString();
-            Tematica tematica = new Tematica(id, nombre, imgUrl);
+            String idEvento = ds.child("evento").getValue().toString();
+            Tematica tematica = new Tematica(id, nombre, imgUrl, idEvento);
             tematicas.add(tematica);
           }
           firebaseTematicasListaCallback.onCallback(tematicas);
@@ -178,8 +179,8 @@ public class FirebaseHelper {
             String nombre = ds.child("nombre").getValue().toString();
             String id = ds.child("id").getValue().toString();
             String imgUrl = ds.child("imgUrl").getValue().toString();
-            String descripcion = ds.child("descripcion").getValue().toString();
-            Categoria categoria = new Categoria(id, nombre, descripcion, imgUrl);
+            String idTematica = ds.child("tematica").getValue().toString();
+            Categoria categoria = new Categoria(id, nombre, imgUrl, idTematica);
             categorias.add(categoria);
           }
           firebaseCategoriasListaCallback.onCallback(categorias);

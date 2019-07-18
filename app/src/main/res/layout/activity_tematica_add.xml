@@ -38,14 +38,17 @@
     android:id="@+id/editNombreTematica"
     android:layout_width="match_parent"
     android:layout_height="40dp"
-    android:layout_margin="@dimen/activity_vertical_margin"/>
+    android:layout_margin="@dimen/activity_vertical_margin"
+    android:singleLine="true"/>
 
   <androidx.appcompat.widget.AppCompatTextView
     style="@style/TextAppearance.MaterialComponents.Body1"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="@string/eventos"
-    android:layout_margin="@dimen/activity_horizontal_margin"/>
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:layout_marginLeft="@dimen/activity_vertical_margin"
+    android:layout_marginRight="@dimen/activity_vertical_margin"
+    android:text="@string/eventos"/>
 
   <androidx.appcompat.widget.AppCompatSpinner
     android:id="@+id/spinnerTematicaEvento"
@@ -57,7 +60,6 @@
   <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/activity_vertical_margin"
     android:gravity="center_horizontal">
 
     <com.google.android.material.button.MaterialButton

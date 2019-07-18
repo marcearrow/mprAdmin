@@ -2,53 +2,54 @@ package com.mpreventos.admin.model;
 
 public class Categoria {
 
-    //atributos Categoria
-    private String id;
-    private String nombre;
-    private String descripcion;
-    private String imgUrl;
+  //atributos Categoria
+  private String id;
+  private String nombre;
+  private String imgUrl;
+  private String tematica;
 
-    //constructor Categoria
+  //constructor Categoria
 
-    public Categoria(String id, String nombre, String descripcion, String imgUrl) {
-        this.id = id;
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.imgUrl = imgUrl;
-    }
+  public Categoria(String id, String nombre, String imgUrl, String tematica) {
+    this.id = id;
+    this.nombre = nombre;
 
-    //getter y setter Categoria
+    this.imgUrl = imgUrl;
+    this.tematica = tematica;
+  }
 
-    public String getId() {
-        return id;
-    }
+  //getter y setter Categoria
 
-    public void setId(String id) {
-        this.id = id;
-    }
+  public String getId() {
+    return id;
+  }
 
-    public String getNombre() {
-        return nombre;
-    }
+  public void setId(String id) {
+    this.id = id;
+  }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+  public String getNombre() {
+    return nombre;
+  }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
+  public void setNombre(String nombre) {
+    this.nombre = nombre;
+  }
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
 
-    public String getImgUrl() {
-        return imgUrl;
-    }
+  public String getImgUrl() {
+    return imgUrl;
+  }
 
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
-    }
+  public void setImgUrl(String imgUrl) {
+    this.imgUrl = imgUrl;
+  }
 
+  public String getTematica() {
+    return tematica;
+  }
+
+  public void setTematica(String tematica) {
+    this.tematica = tematica;
+  }
 }

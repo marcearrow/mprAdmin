@@ -14,7 +14,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -261,12 +260,12 @@ public class ProductoAdd extends AppCompatActivity {
           firebaseHelper = new FirebaseHelper(mDataBase);
           if (modButton.getText().toString().toLowerCase().equals("modificar")) {
             producto = new Producto(id, nombreProducto.getText().toString(),
-                descripcionProducto.getText().toString(), imgUrl);
+                descripcionProducto.getText().toString(), imgUrl, nombre);
 
           } else {
             id = firebaseHelper.getIdkey();
             producto = new Producto(id, nombreProducto.getText().toString(),
-                descripcionProducto.getText().toString(), LOADING_IMAGE_URL);
+                descripcionProducto.getText().toString(), LOADING_IMAGE_URL, nombre);
           }
 
           estado = firebaseHelper.guardarDatosFirebase(producto, id);
@@ -284,17 +283,13 @@ public class ProductoAdd extends AppCompatActivity {
             UploadTask task = storageHelper.uploadImage(uri);
 
             Task<Uri> urlTask = task
-                .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                  @Override
-                  public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task)
-                      throws Exception {
-                    if (!task.isSuccessful()) {
-                      ErrorMensaje();
-                      throw task.getException();
-                    }// Continue with the task to get the download URL
+                .continueWithTask(task1 -> {
+                  if (!task1.isSuccessful()) {
+                    ErrorMensaje();
+                    throw task1.getException();
+                  }// Continue with the task to get the download URL
 
-                    return storageReference.getDownloadUrl();
-                  }
+                  return storageReference.getDownloadUrl();
                 }).addOnCompleteListener(new OnCompleteListener<Uri>() {
                   @Override
                   public void onComplete(@NonNull Task<Uri> task) {
@@ -302,7 +297,7 @@ public class ProductoAdd extends AppCompatActivity {
 
                       Uri downloadUri = task.getResult();
                       producto = new Producto(id, nombreProducto.getText().toString(),
-                          descripcionProducto.getText().toString(), downloadUri.toString());
+                          descripcionProducto.getText().toString(), downloadUri.toString(), nombre);
                       firebaseHelper.guardarDatosFirebase(producto, producto.getId());
                       firebaseHelper.CategoriaProducto(producto, nombre);
                       SuccesMensaje();

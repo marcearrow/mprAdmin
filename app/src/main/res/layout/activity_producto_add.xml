@@ -13,7 +13,7 @@
     <ImageView
       android:id="@+id/imageViewProducto"
       android:layout_width="194dp"
-      android:layout_height="259dp"
+      android:layout_height="240dp"
       android:adjustViewBounds="false"
       android:contentDescription="@string/accesibilidad_producto"
       android:nestedScrollingEnabled="false"
@@ -28,6 +28,7 @@
       android:orientation="vertical">
 
       <androidx.appcompat.widget.AppCompatTextView
+        style="@style/TextAppearance.MaterialComponents.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/eventos"/>
@@ -35,12 +36,11 @@
       <androidx.appcompat.widget.AppCompatSpinner
         android:id="@+id/spinnerProductoEvento"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_margin">
-
-      </androidx.appcompat.widget.AppCompatSpinner>
+        android:layout_height="40dp"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
 
       <androidx.appcompat.widget.AppCompatTextView
+        style="@style/TextAppearance.MaterialComponents.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
@@ -49,12 +49,11 @@
       <androidx.appcompat.widget.AppCompatSpinner
         android:id="@+id/spinnerProductoTematica"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/activity_vertical_margin">
-
-      </androidx.appcompat.widget.AppCompatSpinner>
+        android:layout_height="40dp"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"/>
 
       <androidx.appcompat.widget.AppCompatTextView
+        style="@style/TextAppearance.MaterialComponents.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
@@ -63,9 +62,7 @@
       <androidx.appcompat.widget.AppCompatSpinner
         android:id="@+id/spinnerProductoCategoria"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-      </androidx.appcompat.widget.AppCompatSpinner>
+        android:layout_height="40dp"/>
 
     </LinearLayout>
 
@@ -75,9 +72,8 @@
     android:id="@+id/btSelectImagenProductos"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/activity_vertical_margin"
-    android:layout_marginBottom="@dimen/activity_vertical_margin"
     android:onClick="onClickAddProductos"
+    android:layout_margin="@dimen/dimen_margin8"
     android:text="@string/seleccionar_imagen"/>
 
   <androidx.appcompat.widget.AppCompatTextView
@@ -94,7 +90,8 @@
     android:layout_width="match_parent"
     android:layout_height="40dp"
     android:layout_marginStart="@dimen/activity_vertical_margin"
-    android:layout_marginEnd="@dimen/activity_vertical_margin"/>
+    android:layout_marginEnd="@dimen/activity_vertical_margin"
+    android:singleLine="true"/>
 
   <androidx.appcompat.widget.AppCompatTextView
     style="@style/TextAppearance.MaterialComponents.Body1"
@@ -110,7 +107,8 @@
     android:layout_width="match_parent"
     android:layout_height="40dp"
     android:layout_marginStart="@dimen/activity_vertical_margin"
-    android:layout_marginEnd="@dimen/activity_vertical_margin"/>
+    android:layout_marginEnd="@dimen/activity_vertical_margin"
+    android:singleLine="true"/>
 
   <LinearLayout
     android:layout_width="match_parent"

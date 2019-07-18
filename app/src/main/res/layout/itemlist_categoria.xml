@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
-  android:layout_margin="@dimen/activity_vertical_margin">
+  android:layout_margin="@dimen/dimen_margin8">
 
   <com.google.android.material.card.MaterialCardView
     android:id="@+id/cardCategoria"
@@ -37,17 +37,8 @@
           android:layout_height="wrap_content"
           android:layout_marginStart="@dimen/activity_horizontal_margin"
           android:text="@string/nombre"
-          android:textColor="@color/color_blanco"/>
-
-        <androidx.appcompat.widget.AppCompatTextView
-          android:id="@+id/cardDescripcionCategoria"
-          style="@style/TextAppearance.MaterialComponents.Caption"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginTop="@dimen/dimen_margin8"
-          android:layout_marginBottom="@dimen/activity_horizontal_margin"
-          android:layout_marginStart="@dimen/activity_horizontal_margin"
-          android:text="@string/descripcion"
+          android:layout_marginTop="@dimen/activity_vertical_margin"
+          android:layout_marginBottom="@dimen/activity_vertical_margin"
           android:textColor="@color/color_blanco"/>
 
       </LinearLayout>

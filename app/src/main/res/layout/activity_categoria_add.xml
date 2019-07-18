@@ -27,7 +27,6 @@
     style="@style/TextAppearance.MaterialComponents.Body1"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/activity_vertical_margin"
     android:layout_marginStart="@dimen/activity_vertical_margin"
     android:layout_marginEnd="@dimen/activity_vertical_margin"
     android:text="@string/nombre_categoria"/>
@@ -37,53 +36,34 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:layout_marginStart="@dimen/activity_vertical_margin"
-    android:layout_marginEnd="@dimen/activity_vertical_margin"/>
+    android:layout_marginEnd="@dimen/activity_vertical_margin"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
+    android:singleLine="true"/>
 
   <androidx.appcompat.widget.AppCompatTextView
-    style="@style/TextAppearance.MaterialComponents.Body1"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/activity_vertical_margin"
+    style="@style/TextAppearance.MaterialComponents.Caption"
     android:layout_marginStart="@dimen/activity_vertical_margin"
-    android:layout_marginEnd="@dimen/activity_vertical_margin"
-    android:text="@string/descripcion_categoria"/>
-
-  <com.google.android.material.textfield.TextInputEditText
-    android:id="@+id/editDescripcionCategoria"
-    android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:layout_marginStart="@dimen/activity_vertical_margin"
-    android:layout_marginEnd="@dimen/activity_vertical_margin"
-    android:layout_marginBottom="@dimen/dimen_margin8"/>
-
-  <GridLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
-    android:layout_marginTop="@dimen/dimen_margin8"
-    android:columnCount="2">
-
-    <androidx.appcompat.widget.AppCompatTextView
-      style="@style/TextAppearance.MaterialComponents.Body1"
-      android:layout_marginStart="@dimen/activity_vertical_margin"
-      android:text="@string/eventos"/>
-
-    <androidx.appcompat.widget.AppCompatTextView
-      android:layout_marginStart="@dimen/activity_vertical_margin"
-      style="@style/TextAppearance.MaterialComponents.Body1"
-      android:text="@string/tematicas"/>
-
-    <androidx.appcompat.widget.AppCompatSpinner
-      android:id="@+id/spinnerCategoriaEvento"
-      android:layout_width="210dp"
-      />
+    android:text="@string/eventos"/>
 
 
-    <androidx.appcompat.widget.AppCompatSpinner
-      android:layout_width="210dp"
-      android:id="@+id/spinnerCategoriaTematica"/>
+  <androidx.appcompat.widget.AppCompatSpinner
+    android:id="@+id/spinnerCategoriaEvento"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"/>
 
-  </GridLayout>
+  <androidx.appcompat.widget.AppCompatTextView
+    style="@style/TextAppearance.MaterialComponents.Caption"
+    android:layout_marginStart="@dimen/activity_vertical_margin"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/tematicas"/>
+
+  <androidx.appcompat.widget.AppCompatSpinner
+    android:id="@+id/spinnerCategoriaTematica"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"/>
 
 
   <LinearLayout

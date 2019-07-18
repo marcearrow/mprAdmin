@@ -71,7 +71,10 @@ public class ProductoLista extends AppCompatActivity {
                                 String nombre = Funciones.asignarValor(ds.child("nombre").getValue().toString());
                                 String imgUrl = Funciones.asignarValor(ds.child("imgUrl").getValue().toString());
                                 String descripcion = Funciones.asignarValor(ds.child("descripcion").getValue().toString());
-                                productoLista.add(new Producto(id, nombre, descripcion, imgUrl));
+                                String idCategoria = Funciones
+                                    .asignarValor(ds.child("categoria").getValue().toString());
+                                productoLista.add(
+                                    new Producto(id, nombre, descripcion, imgUrl, idCategoria));
                             }
                             productoAdapter = new ProductoAdapter(R.layout.itemlist_producto,
                                 productoLista, ProductoLista.this, db);

@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -25,13 +24,11 @@ import com.google.firebase.storage.UploadTask;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.helper.StorageHelper;
-import com.mpreventos.admin.model.Evento;
 import com.mpreventos.admin.model.Tematica;
 import com.mpreventos.admin.utils.DialogAlertSpinner;
 import com.mpreventos.admin.utils.DialogLoader;
 import com.mpreventos.admin.utils.Funciones;
 import com.mpreventos.admin.utils.Spinnerloaders;
-import java.util.ArrayList;
 
 public class TematicaAdd extends AppCompatActivity {
 
@@ -66,32 +63,27 @@ public class TematicaAdd extends AppCompatActivity {
 
 
     final Spinnerloaders spinnerloaders = new Spinnerloaders(getBaseContext());
-    spinnerloaders.adapterEventos(new Spinnerloaders.SpinnerAdaperCallbackEventos() {
-      @Override
-      public void callbackEventos(ArrayAdapter<String> adapter,
-          final ArrayList<Evento> listaEventos) {
+    spinnerloaders.adapterEventos((adapter, listaEventos) -> {
 
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-          @Override
-          public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            String item = parent.getItemAtPosition(position).toString();
-            if (!item.equals("Seleccione una opción...") && !item.equals("")) {
-              if (listaEventos.get(position - 1).getNombre().equals(item)) {
-                getItemName(listaEventos.get(position - 1).getId());
-              } else {
-                ErrorMensaje();
-              }
+      spinner.setAdapter(adapter);
+      spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+          String item = parent.getItemAtPosition(position).toString();
+          if (!item.equals("Seleccione una opción...") && !item.equals("")) {
+            if (listaEventos.get(position - 1).getNombre().equals(item)) {
+              getItemName(listaEventos.get(position - 1).getId());
+            } else {
+              ErrorMensaje();
             }
           }
+        }
 
-          @Override
-          public void onNothingSelected(AdapterView<?> parent) {
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
 
-          }
-        });
-      }
-
+        }
+      });
     });
 
     if (getIntent() != null && getIntent().getExtras() != null) {
@@ -160,11 +152,12 @@ public class TematicaAdd extends AppCompatActivity {
 
           firebaseHelper = new FirebaseHelper(mDataBase);
           if (modButton.getText().toString().toLowerCase().equals("modificar")) {
-            tematica = new Tematica(id, nombreTematica.getText().toString(), imgUrl);
+            tematica = new Tematica(id, nombreTematica.getText().toString(), imgUrl, nombre);
 
           } else {
             id = firebaseHelper.getIdkey();
-            tematica = new Tematica(id, nombreTematica.getText().toString(), LOADING_IMAGE_URL);
+            tematica = new Tematica(id, nombreTematica.getText().toString(), LOADING_IMAGE_URL,
+                nombre);
           }
 
           Boolean estado = firebaseHelper.guardarDatosFirebase(tematica, id);
@@ -193,7 +186,7 @@ public class TematicaAdd extends AppCompatActivity {
 
                     Uri downloadUri = task12.getResult();
                     tematica = new Tematica(id, nombreTematica.getText().toString(),
-                        downloadUri.toString());
+                        downloadUri.toString(), nombre);
                     firebaseHelper.guardarDatosFirebase(tematica, tematica.getId());
                     firebaseHelper.EventosTematicas(tematica, nombre);
                     SuccesMensaje();
