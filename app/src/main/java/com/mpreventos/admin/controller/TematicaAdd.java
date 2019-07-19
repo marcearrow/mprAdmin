@@ -1,5 +1,10 @@
 package com.mpreventos.admin.controller;
 
+import static com.mpreventos.admin.utils.Constantes.EVENTOS_TEMATICAS;
+import static com.mpreventos.admin.utils.Constantes.LOADING_IMG;
+import static com.mpreventos.admin.utils.Constantes.REQUEST_IMAGE;
+import static com.mpreventos.admin.utils.Constantes.TEMATICAS_CHILD;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -24,17 +30,19 @@ import com.google.firebase.storage.UploadTask;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.helper.StorageHelper;
+import com.mpreventos.admin.model.Evento;
 import com.mpreventos.admin.model.Tematica;
 import com.mpreventos.admin.utils.DialogAlertSpinner;
 import com.mpreventos.admin.utils.DialogLoader;
 import com.mpreventos.admin.utils.Funciones;
 import com.mpreventos.admin.utils.Spinnerloaders;
+import java.util.ArrayList;
 
 public class TematicaAdd extends AppCompatActivity {
 
-  private static final String LOADING_IMAGE_URL = "https://firebasestorage.googleapis.com/v0/b/mprfirebase-7753b.appspot.com/o/logo-mpr-decoracion.png?alt=media&token=49548e12-c035-4995-be4d-f38be90bbc06";
-  private static final String TEMATICAS_CHILD = "tematicas";
-  private static final int REQUEST_IMAGE = 2;
+
+  String spinnerElement;
+  ArrayList<Evento> listaEventosSpinner;
   private Uri uri;
   private DatabaseReference mDataBase;
   private ImageView imagenTematica;
@@ -47,12 +55,19 @@ public class TematicaAdd extends AppCompatActivity {
   private Spinner spinner;
   private String nombre;
   private DialogLoader dialogLoader = null;
-
+  private String relacionAntigua;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_tematica_add);
+
+    ActionBar actionBar = getSupportActionBar();
+
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setDisplayShowHomeEnabled(true);
+    }
 
     mDataBase = FirebaseDatabase.getInstance().getReference(TEMATICAS_CHILD);
     mDataBase.keepSynced(true);
@@ -61,10 +76,9 @@ public class TematicaAdd extends AppCompatActivity {
     modButton = findViewById(R.id.btAddTematica);
     spinner = findViewById(R.id.spinnerTematicaEvento);
 
-
     final Spinnerloaders spinnerloaders = new Spinnerloaders(getBaseContext());
     spinnerloaders.adapterEventos((adapter, listaEventos) -> {
-
+      listaEventosSpinner = listaEventos;
       spinner.setAdapter(adapter);
       spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
         @Override
@@ -83,35 +97,51 @@ public class TematicaAdd extends AppCompatActivity {
         public void onNothingSelected(AdapterView<?> parent) {
 
         }
+
       });
+      if (getIntent() != null && getIntent().getExtras() != null) {
+
+        id = getIntent().getStringExtra("id");
+        setTitle("Modificar temática");
+
+        modButton.setText(R.string.modificar);
+        mDataBase.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+          @Override
+          public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            if (dataSnapshot.exists()) {
+              nombreTematica.setText(dataSnapshot.child("nombre").getValue().toString());
+              imgUrl = dataSnapshot.child("imgUrl").getValue().toString();
+              Funciones funciones = new Funciones();
+              funciones.setImg(imgUrl, imagenTematica, getApplicationContext());
+              spinnerElement = dataSnapshot.child("evento").getValue().toString();
+              relacionAntigua = spinnerElement;
+
+              int i = 0;
+              for (Evento evento :
+                  listaEventosSpinner) {
+                i++;
+                if (evento.getId().equals(spinnerElement)) {
+                  spinner.setSelection(i);
+                }
+              }
+            }
+
+
+          }
+
+          @Override
+          public void onCancelled(@NonNull DatabaseError databaseError) {
+
+          }
+        });
+
+
+      } else {
+        setTitle("Agregar temática");
+      }
+
     });
 
-    if (getIntent() != null && getIntent().getExtras() != null) {
-
-      id = getIntent().getStringExtra("id");
-      setTitle("Modificar temática");
-
-      modButton.setText(R.string.modificar);
-      mDataBase.child(id).addValueEventListener(new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-          nombreTematica.setText(dataSnapshot.child("nombre").getValue().toString());
-          imgUrl = dataSnapshot.child("imgUrl").getValue().toString();
-          Funciones funciones = new Funciones();
-          funciones.setImg(imgUrl, imagenTematica, getApplicationContext());
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-        }
-      });
-      //buscar si en todos los datasnapthop de eventosTematicas si existe con un true seleccionar ese item e el spinner opbeniendo el numero de ciclos
-      FirebaseHelper helper = new FirebaseHelper(mDataBase);
-      helper.BuscarDatos(id, "eventoTematicas");
-    } else {
-      setTitle("Agregar temática");
-    }
   }
 
   private void getItemName(String item) {
@@ -156,7 +186,7 @@ public class TematicaAdd extends AppCompatActivity {
 
           } else {
             id = firebaseHelper.getIdkey();
-            tematica = new Tematica(id, nombreTematica.getText().toString(), LOADING_IMAGE_URL,
+            tematica = new Tematica(id, nombreTematica.getText().toString(), LOADING_IMG,
                 nombre);
           }
 
@@ -164,8 +194,14 @@ public class TematicaAdd extends AppCompatActivity {
 
           if (!estado) {
             ErrorMensaje();
-          } else if (uri == null) {
-            firebaseHelper.EventosTematicas(tematica, nombre);
+          } else if (uri == null && modButton.getText().toString().toLowerCase()
+              .equals("modificar")) {
+            firebaseHelper.AddRelacion(tematica.getId(), nombre, EVENTOS_TEMATICAS);
+            firebaseHelper.EliminarRelacion(tematica.getId(), relacionAntigua, EVENTOS_TEMATICAS);
+            SuccesMensaje();
+            finish();
+          } else if (modButton.getText().toString().toLowerCase().equals("agregar")) {
+            firebaseHelper.AddRelacion(tematica.getId(), nombre, "eventoTematicas");
             SuccesMensaje();
             finish();
           } else {
@@ -188,7 +224,7 @@ public class TematicaAdd extends AppCompatActivity {
                     tematica = new Tematica(id, nombreTematica.getText().toString(),
                         downloadUri.toString(), nombre);
                     firebaseHelper.guardarDatosFirebase(tematica, tematica.getId());
-                    firebaseHelper.EventosTematicas(tematica, nombre);
+                    firebaseHelper.AddRelacion(tematica.getId(), nombre, "eventoTematicas");
                     SuccesMensaje();
                     finish();
                   } else {
@@ -239,6 +275,12 @@ public class TematicaAdd extends AppCompatActivity {
       dialogLoader.DismisDialog();
     }
     super.finish();
+  }
+
+  @Override
+  public boolean onSupportNavigateUp() {
+    onBackPressed();
+    return true;
   }
 
 }

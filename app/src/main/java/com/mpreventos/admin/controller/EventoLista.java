@@ -1,108 +1,85 @@
 package com.mpreventos.admin.controller;
 
+import static com.mpreventos.admin.utils.Constantes.EVENTOS_CHILD;
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
-import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.adapter.EventoAdapter;
-import com.mpreventos.admin.model.Evento;
-import java.util.ArrayList;
+import com.mpreventos.admin.helper.FirebaseHelper;
+
 
 public class EventoLista extends AppCompatActivity {
 
-    private static final String EVENT_CHILD = "eventos";
-    private static final String TAG = "firebaselistaconeccion";
-    private DatabaseReference db;
-    private RecyclerView recyclerView;
-    private FloatingActionButton fab;
+  private DatabaseReference db;
+  private RecyclerView recyclerView;
   private EventoAdapter eventoAdapter;
   private ProgressBar loader;
 
 
-    private ArrayList<Evento> eventoLista = new ArrayList<>();
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_evento_lista);
+    db = FirebaseDatabase.getInstance().getReference();
+    db.keepSynced(true);
+    ActionBar actionBar = getSupportActionBar();
+    setTitle(R.string.eventos);
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_evento_lista);
-        db = FirebaseDatabase.getInstance().getReference();
-        db.keepSynced(true);
-        setTitle(R.string.eventos);
+    loader = findViewById(R.id.progressBar1);
+    recyclerView = findViewById(R.id.recyclerEvento);
+    recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        loader = findViewById(R.id.progressBar1);
-
-
-        recyclerView = findViewById(R.id.recyclerEvento);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        obtenerEventos();
-        fab = findViewById(R.id.fabEvento);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent intent = new Intent(view.getContext(), EventoAdd.class);
-                startActivity(intent);
-            }
-        });
-
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setDisplayShowHomeEnabled(true);
     }
 
-  private void obtenerEventos() {
-        try {
-            db = db.child(EVENT_CHILD);
-            db.getRef().addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+    FloatingActionButton fab = findViewById(R.id.fabEvento);
 
-                    if (dataSnapshot.exists()) {
-                        eventoLista.clear();
+    fab.setOnClickListener(view -> {
 
-                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            if (ds.child("id").getValue() != null) {
-                                String nombre = ds.child("nombre").getValue().toString();
-                                String imgUrl = ds.child("imgUrl").getValue().toString();
-                                String id = ds.child("id").getValue().toString();
-                                eventoLista.add(new Evento(id, nombre, imgUrl));
-                            }
+      Intent intent = new Intent(view.getContext(), EventoAdd.class);
+      startActivity(intent);
+    });
 
-                            eventoAdapter = new EventoAdapter(R.layout.itemlist_evento, eventoLista,
-                                EventoLista.this, db);
-                            recyclerView.setAdapter(eventoAdapter);
-                        }
-                    }
-                    if (recyclerView.getAdapter() == null) {
-                        Log.d(TAG, "sin adapter");
-                    } else {
-                        Log.d(TAG, "con adapter");
-                        loader.setVisibility(View.GONE);
+    ObtenerEventos();
 
-                    }
-                }
+  }
 
+  private void ObtenerEventos() {
+    db = db.child(EVENTOS_CHILD);
+    FirebaseHelper firebaseHelper = new FirebaseHelper(db);
+    try {
+      firebaseHelper.ListaEventos(listaDeEventos -> {
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+        eventoAdapter = new EventoAdapter(R.layout.itemlist_evento, listaDeEventos,
+            EventoLista.this, db);
+        recyclerView.setAdapter(eventoAdapter);
 
-                }
-            });
-
-        } catch (Exception ex) {
-            Log.d(TAG, "error");
+        if (recyclerView.getAdapter() != null && listaDeEventos.size() > 0) {
+          loader.setVisibility(View.GONE);
         }
+      });
+
+    } catch (Exception ignored) {
+
     }
+  }
+
+  @Override
+  public boolean onSupportNavigateUp() {
+    onBackPressed();
+    return true;
+  }
 
 }

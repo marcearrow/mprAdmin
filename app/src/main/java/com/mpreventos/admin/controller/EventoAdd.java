@@ -1,5 +1,9 @@
 package com.mpreventos.admin.controller;
 
+import static com.mpreventos.admin.utils.Constantes.EVENTOS_CHILD;
+import static com.mpreventos.admin.utils.Constantes.LOADING_IMG;
+import static com.mpreventos.admin.utils.Constantes.REQUEST_IMAGE;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,9 +13,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,9 +33,7 @@ import com.mpreventos.admin.utils.Funciones;
 
 public class EventoAdd extends AppCompatActivity {
 
-  private static final String LOADING_IMAGE_URL = "https://firebasestorage.googleapis.com/v0/b/mprfirebase-7753b.appspot.com/o/logo-mpr-decoracion.png?alt=media&token=49548e12-c035-4995-be4d-f38be90bbc06";
-  private static final String EVENTOS_CHILD = "eventos";
-  private static final int REQUEST_IMAGE = 2;
+
   private DatabaseReference mDataBase;
   private ImageView imagenEvento;
   private EditText nombreEvento;
@@ -41,7 +42,6 @@ public class EventoAdd extends AppCompatActivity {
   private String imgUrl;
   private String id;
   private Button modButton;
-  private Boolean estado;
   private Uri uri;
   private DialogLoader dialogLoader;
 
@@ -50,6 +50,13 @@ public class EventoAdd extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_evento_add);
+
+    ActionBar actionBar = getSupportActionBar();
+
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setDisplayShowHomeEnabled(true);
+    }
 
     dialogLoader = new DialogLoader(this);
     mDataBase = FirebaseDatabase.getInstance().getReference(EVENTOS_CHILD);
@@ -62,7 +69,7 @@ public class EventoAdd extends AppCompatActivity {
     if (getIntent() != null && getIntent().getExtras() != null) {
 
       id = getIntent().getStringExtra("id");
-      setTitle("modificar evento");
+      setTitle("Modificar evento");
 
       modButton.setText(R.string.modificar);
       mDataBase.child(id).addValueEventListener(new ValueEventListener() {
@@ -116,10 +123,10 @@ public class EventoAdd extends AppCompatActivity {
 
           } else {
             id = firebaseHelper.getIdkey();
-            tempEvento = new Evento(id, nombreEvento.getText().toString(), LOADING_IMAGE_URL);
+            tempEvento = new Evento(id, nombreEvento.getText().toString(), LOADING_IMG);
           }
 
-          estado = firebaseHelper.guardarDatosFirebase(tempEvento, id);
+          Boolean estado = firebaseHelper.guardarDatosFirebase(tempEvento, id);
 
           if (!estado) {
             ErrorMensaje();
@@ -133,32 +140,26 @@ public class EventoAdd extends AppCompatActivity {
             UploadTask task = storageHelper.uploadImage(uri);
 
             Task<Uri> urlTask = task
-                .continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                  @Override
-                  public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task)
-                      throws Exception {
-                    if (!task.isSuccessful()) {
-                      ErrorMensaje();
-                      throw task.getException();
+                .continueWithTask(task1 -> {
+                  if (!task1.isSuccessful()) {
+                    ErrorMensaje();
+                    throw task1.getException();
 
-                    }// Continue with the task to get the download URL
-                    return storageReference.getDownloadUrl();
-                  }
+                  }// Continue with the task to get the download URL
+                  return storageReference.getDownloadUrl();
+                }).addOnCompleteListener(task12 -> {
+                  if (task12.isSuccessful()) {
 
-                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                  @Override
-                  public void onComplete(@NonNull Task<Uri> task) {
-                    if (task.isSuccessful()) {
-
-                      Uri downloadUri = task.getResult();
+                    Uri downloadUri = task12.getResult();
+                    if (downloadUri != null) {
                       tempEvento = new Evento(id, nombreEvento.getText().toString(),
                           downloadUri.toString());
-                      firebaseHelper.guardarDatosFirebase(tempEvento, tempEvento.getId());
-                      SuccesMensaje();
-                      finish();
-                    } else {
-                      ErrorMensaje();
                     }
+                    firebaseHelper.guardarDatosFirebase(tempEvento, tempEvento.getId());
+                    SuccesMensaje();
+                    finish();
+                  } else {
+                    ErrorMensaje();
                   }
                 });
           }
@@ -208,4 +209,10 @@ public class EventoAdd extends AppCompatActivity {
     super.finish();
   }
 
+
+  @Override
+  public boolean onSupportNavigateUp() {
+    onBackPressed();
+    return true;
+  }
 }

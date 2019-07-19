@@ -9,7 +9,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.mpreventos.admin.helper.FirebaseHelper;
-import com.mpreventos.admin.helper.FirebaseHelper.FirebaseEventosListaCallback;
 import com.mpreventos.admin.model.Categoria;
 import com.mpreventos.admin.model.Evento;
 import com.mpreventos.admin.model.Tematica;
@@ -29,21 +28,18 @@ public class Spinnerloaders {
   public void adapterEventos(final SpinnerAdaperCallbackEventos spinnerAdaperCallbackEventos) {
     DatabaseReference eventos = FirebaseDatabase.getInstance().getReference("eventos");
     FirebaseHelper helperEventos = new FirebaseHelper(eventos);
-    helperEventos.EventosNombre(new FirebaseEventosListaCallback() {
-      @Override
-      public void onCallback(ArrayList<Evento> listaDeEventos) {
+    helperEventos.ListaEventos(listaDeEventos -> {
 
-        ArrayList<String> nombreEventosLista = new ArrayList<>();
-        nombreEventosLista.add(0, "Seleccione una opción...");
+      ArrayList<String> nombreEventosLista = new ArrayList<>();
+      nombreEventosLista.add(0, "Seleccione una opción...");
 
-        for (Evento evento :
-            listaDeEventos) {
-          nombreEventosLista.add(evento.getNombre());
-        }
-        adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_activated_1,
-            nombreEventosLista);
-        spinnerAdaperCallbackEventos.callbackEventos(adapter, listaDeEventos);
+      for (Evento evento :
+          listaDeEventos) {
+        nombreEventosLista.add(evento.getNombre());
       }
+      adapter = new ArrayAdapter<>(context, android.R.layout.simple_list_item_activated_1,
+          nombreEventosLista);
+      spinnerAdaperCallbackEventos.callbackEventos(adapter, listaDeEventos);
     });
   }
 

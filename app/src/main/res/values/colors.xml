@@ -7,4 +7,5 @@
   <color name="color_blanco">#ffffff</color>
   <color name="transparent">#00FFFFFF</color>
   <color name="alertColor">#E53935</color>
+  <color name="imageview_back">#5EBBB9B9</color>
 </resources>

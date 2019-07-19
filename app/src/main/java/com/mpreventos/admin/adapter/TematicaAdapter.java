@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -57,26 +56,20 @@ public class TematicaAdapter extends RecyclerView.Adapter<TematicaAdapter.viewHo
         imageLoader.setImgWithGlide(tematica.getImgUrl(), holder.imageView);
       } catch (Exception ex) {
         Toast.makeText(context, "Ocurrio un error", Toast.LENGTH_SHORT).show();
-        //holder.imageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.logompr));
+
       }
 
-      holder.cardView.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-          Intent intent = new Intent(v.getContext(), TematicaAdd.class);
-          intent.putExtra("id", idTematica);
-          v.getContext().startActivity(intent);
-        }
+      holder.cardView.setOnClickListener(v -> {
+        Intent intent = new Intent(v.getContext(), TematicaAdd.class);
+        intent.putExtra("id", idTematica);
+        v.getContext().startActivity(intent);
       });
     }
-    holder.cardView.setOnLongClickListener(new OnLongClickListener() {
-      @Override
-      public boolean onLongClick(View view) {
-        DialogAlertDelete dialogAlertDelete = new DialogAlertDelete(context, "esta temática", ds,
-            tematica.getId());
-        dialogAlertDelete.CreateDeleteDialog();
-        return false;
-      }
+    holder.cardView.setOnLongClickListener(view -> {
+      DialogAlertDelete dialogAlertDelete = new DialogAlertDelete(context, "esta temática", ds,
+          tematica.getId(), tematica.getEvento());
+      dialogAlertDelete.CreateDeleteDialog();
+      return false;
     });
   }
 

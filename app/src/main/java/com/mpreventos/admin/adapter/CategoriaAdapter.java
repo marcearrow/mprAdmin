@@ -67,7 +67,7 @@ public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.view
     });
     holder.cardView.setOnLongClickListener(view -> {
       DialogAlertDelete dialogAlertDelete = new DialogAlertDelete(context, "esta categoría", ds,
-          categoria.getId());
+          categoria.getId(), categoria.getTematica());
       dialogAlertDelete.CreateDeleteDialog();
       return false;
     });

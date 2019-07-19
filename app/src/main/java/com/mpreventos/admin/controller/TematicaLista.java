@@ -1,94 +1,82 @@
 package com.mpreventos.admin.controller;
 
+import static com.mpreventos.admin.utils.Constantes.TEMATICAS_CHILD;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
-import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.adapter.TematicaAdapter;
-import com.mpreventos.admin.model.Tematica;
-import java.util.ArrayList;
+import com.mpreventos.admin.helper.FirebaseHelper;
 
 public class TematicaLista extends AppCompatActivity {
-    private static final String TEMATICA_CHILD = "tematicas";
-    private DatabaseReference db;
-    private RecyclerView recyclerView;
-    private FloatingActionButton fab;
-    private TematicaAdapter tematicaAdapter;
+
+  private DatabaseReference db;
+  private RecyclerView recyclerView;
+  private TematicaAdapter tematicaAdapter;
   private ProgressBar loader;
 
-    private ArrayList<Tematica> tematicaLista = new ArrayList<>();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tematica_lista);
-        setTitle("Temáticas");
-        db = FirebaseDatabase.getInstance().getReference();
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_tematica_lista);
 
-        loader = findViewById(R.id.progressBar2);
+    ActionBar actionBar = getSupportActionBar();
 
-        recyclerView = findViewById(R.id.recyclerTematica);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-
-        obtenerTematicas();
-        fab = findViewById(R.id.fabTematica);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), TematicaAdd.class);
-                startActivity(intent);
-
-
-            }
-        });
-
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setDisplayShowHomeEnabled(true);
     }
+    setTitle("Temáticas");
+    db = FirebaseDatabase.getInstance().getReference();
 
-    private void obtenerTematicas() {
-        try {
-            db = db.child(TEMATICA_CHILD);
-            db.getRef().addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        tematicaLista.clear();
+    loader = findViewById(R.id.progressBar2);
 
-                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            if (ds.child("id").getValue() != null) {
-                                String nombre = ds.child("nombre").getValue().toString();
-                                String imgUrl = ds.child("imgUrl").getValue().toString();
-                                String id = ds.child("id").getValue().toString();
-                                String idEvento = ds.child("evento").getValue().toString();
-                                tematicaLista.add(new Tematica(id, nombre, imgUrl, idEvento));
-                            }
-                            tematicaAdapter = new TematicaAdapter(R.layout.itemlist_tematica,
-                                tematicaLista, TematicaLista.this, db);
-                            recyclerView.setAdapter(tematicaAdapter);
-                        }
-                    }
-                    if (recyclerView.getAdapter() != null) {
-                        loader.setVisibility(View.GONE);
-                    }
-                }
+    recyclerView = findViewById(R.id.recyclerTematica);
+    recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
+    ObtenerTematicas();
+    FloatingActionButton fab = findViewById(R.id.fabTematica);
+    fab.setOnClickListener(v -> {
+      Intent intent = new Intent(v.getContext(), TematicaAdd.class);
+      startActivity(intent);
 
-                }
-            });
-        } catch (Exception ex) {
-            //catch exception
+    });
+
+  }
+
+  private void ObtenerTematicas() {
+    try {
+      db = db.child(TEMATICAS_CHILD);
+      FirebaseHelper firebaseHelper = new FirebaseHelper(db);
+      firebaseHelper.ListaTematicas(listaDeTematicas -> {
+        tematicaAdapter = new TematicaAdapter(R.layout.itemlist_tematica,
+            listaDeTematicas, TematicaLista.this, db);
+        recyclerView.setAdapter(tematicaAdapter);
+
+        if (recyclerView.getAdapter() != null && listaDeTematicas.size() > 0) {
+          loader.setVisibility(View.GONE);
         }
+
+      });
+
+    } catch (Exception ex) {
+      //catch exception
     }
+  }
+
+  @Override
+  public boolean onSupportNavigateUp() {
+    onBackPressed();
+    return true;
+  }
 }

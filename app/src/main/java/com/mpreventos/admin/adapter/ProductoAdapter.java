@@ -72,7 +72,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.viewHo
       @Override
       public boolean onLongClick(View view) {
         DialogAlertDelete dialogAlertDelete = new DialogAlertDelete(context, "este producto", ds,
-            producto.getId());
+            producto.getId(), producto.getCategoria());
         dialogAlertDelete.CreateDeleteDialog();
         return false;
       }

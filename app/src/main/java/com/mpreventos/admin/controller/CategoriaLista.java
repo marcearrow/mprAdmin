@@ -1,32 +1,27 @@
 package com.mpreventos.admin.controller;
 
+import static com.mpreventos.admin.utils.Constantes.CATEGORIAS_CHILD;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
-import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.adapter.CategoriaAdapter;
-import com.mpreventos.admin.model.Categoria;
-import java.util.ArrayList;
+import com.mpreventos.admin.helper.FirebaseHelper;
 
 public class CategoriaLista extends AppCompatActivity {
 
-  private static final String CATEGORIA_CHILD = "categorias";
   private DatabaseReference db;
   private RecyclerView recyclerView;
-  private FloatingActionButton fab;
   private CategoriaAdapter categoriaAdapter;
-  private ArrayList<Categoria> categoriaLista = new ArrayList<>();
   private ProgressBar loader;
 
 
@@ -34,6 +29,13 @@ public class CategoriaLista extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_categoria_lista);
+    ActionBar actionBar = getSupportActionBar();
+
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setDisplayShowHomeEnabled(true);
+    }
+
     setTitle("Categorías");
     db = FirebaseDatabase.getInstance().getReference();
 
@@ -41,8 +43,8 @@ public class CategoriaLista extends AppCompatActivity {
     recyclerView = findViewById(R.id.recyclerCategoria);
     recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-    obtenerCategorias();
-    fab = findViewById(R.id.fabCategoria);
+    ObtenerCategorias();
+    FloatingActionButton fab = findViewById(R.id.fabCategoria);
     fab.setOnClickListener(v -> {
       Intent intent = new Intent(v.getContext(), CategoriaAdd.class);
       startActivity(intent);
@@ -50,41 +52,29 @@ public class CategoriaLista extends AppCompatActivity {
 
   }
 
-  private void obtenerCategorias() {
+  private void ObtenerCategorias() {
     try {
-      db = db.child(CATEGORIA_CHILD);
-      db.getRef().addValueEventListener(new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-          if (dataSnapshot.exists()) {
-            categoriaLista.clear();
+      db = db.child(CATEGORIAS_CHILD);
+      FirebaseHelper firebaseHelper = new FirebaseHelper(db);
+      firebaseHelper.ListaCategorias(listaDeCategorias -> {
+        categoriaAdapter = new CategoriaAdapter(R.layout.itemlist_categoria,
+            listaDeCategorias, CategoriaLista.this, db);
+        recyclerView.setAdapter(categoriaAdapter);
 
-            for (DataSnapshot ds : dataSnapshot.getChildren()) {
-              if (ds.child("id").getValue() != null) {
-                String nombre = ds.child("nombre").getValue().toString();
-                String imgUrl = ds.child("imgUrl").getValue().toString();
-                String id = ds.child("id").getValue().toString();
-                String idTematica = ds.child("tematica").getValue().toString();
-
-                categoriaLista.add(new Categoria(id, nombre, imgUrl, idTematica));
-              }
-              categoriaAdapter = new CategoriaAdapter(R.layout.itemlist_categoria,
-                  categoriaLista, CategoriaLista.this, db);
-              recyclerView.setAdapter(categoriaAdapter);
-            }
-          }
-          if (recyclerView.getAdapter() != null) {
-            loader.setVisibility(View.GONE);
-          }
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError databaseError) {
-
+        if (recyclerView.getAdapter() != null && listaDeCategorias.size() > 0) {
+          loader.setVisibility(View.GONE);
         }
       });
-    } catch (Exception ex) {
-      //catch exception
+    } catch (Exception ignored) {
+
     }
   }
+
+
+  @Override
+  public boolean onSupportNavigateUp() {
+    onBackPressed();
+    return true;
+  }
+
 }

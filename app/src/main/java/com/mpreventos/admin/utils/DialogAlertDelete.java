@@ -1,8 +1,6 @@
 package com.mpreventos.admin.utils;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.widget.Toast;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.database.DatabaseReference;
@@ -18,12 +16,15 @@ public class DialogAlertDelete {
   private String mensaje;
   private DatabaseReference ds;
   private String nombre;
+  private String idParent;
 
-  public DialogAlertDelete(Context context, String mensaje, DatabaseReference ds, String nombre) {
+  public DialogAlertDelete(Context context, String mensaje, DatabaseReference ds, String nombre,
+      String idParent) {
     this.context = context;
     this.mensaje = mensaje;
     this.ds = ds;
     this.nombre = nombre;
+    this.idParent = idParent;
   }
 
   public void CreateDeleteDialog() {
@@ -33,22 +34,19 @@ public class DialogAlertDelete {
     dialogBuilder.setMessage("Deseas eliminar " + mensaje);
     dialogBuilder.setCancelable(false);
 
-    dialogBuilder.setNegativeButton("ELIMINAR", new OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialogInterface, int i) {
-        FirebaseHelper firebaseHelper = new FirebaseHelper(ds);
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference()
-            .child(ds.getKey()).child(nombre);
+    dialogBuilder.setNegativeButton("ELIMINAR", (dialogInterface, i) -> {
+      FirebaseHelper firebaseHelper = new FirebaseHelper(ds);
+      StorageReference storageReference = FirebaseStorage.getInstance().getReference()
+          .child(ds.getKey()).child(nombre);
 
-        StorageHelper storageHelper = new StorageHelper(storageReference);
-        storageHelper.DeleteStorage();
-        boolean estado = firebaseHelper.EliminarNodoFirebase(nombre, ds.getKey());
+      StorageHelper storageHelper = new StorageHelper(storageReference);
+      storageHelper.DeleteStorage();
+      boolean estado = firebaseHelper.EliminarNodoFirebase(nombre, ds.getKey(), idParent);
 
-        if (estado) {
-          Toast.makeText(context, "Eliminado exitosamente", Toast.LENGTH_SHORT).show();
-        } else {
-          Toast.makeText(context, "No se pudo eliminar", Toast.LENGTH_SHORT).show();
-        }
+      if (estado) {
+        Toast.makeText(context, "Eliminado exitosamente", Toast.LENGTH_SHORT).show();
+      } else {
+        Toast.makeText(context, "No se pudo eliminar", Toast.LENGTH_SHORT).show();
       }
     });
 

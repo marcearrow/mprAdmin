@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -27,15 +28,11 @@ import com.google.firebase.storage.UploadTask;
 import com.mpreventos.admin.R;
 import com.mpreventos.admin.helper.FirebaseHelper;
 import com.mpreventos.admin.helper.StorageHelper;
-import com.mpreventos.admin.model.Categoria;
-import com.mpreventos.admin.model.Evento;
 import com.mpreventos.admin.model.Producto;
-import com.mpreventos.admin.model.Tematica;
 import com.mpreventos.admin.utils.DialogAlertSpinner;
 import com.mpreventos.admin.utils.DialogLoader;
 import com.mpreventos.admin.utils.Funciones;
 import com.mpreventos.admin.utils.Spinnerloaders;
-import com.mpreventos.admin.utils.Spinnerloaders.SpinnerAdapterCallbackCategorias;
 import java.util.ArrayList;
 
 public class ProductoAdd extends AppCompatActivity {
@@ -62,6 +59,13 @@ public class ProductoAdd extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_producto_add);
 
+    ActionBar actionBar = getSupportActionBar();
+
+    if (actionBar != null) {
+      actionBar.setDisplayHomeAsUpEnabled(true);
+      actionBar.setDisplayShowHomeEnabled(true);
+    }
+
     mDataBase = FirebaseDatabase.getInstance().getReference(PRODUCTOS_CHILD);
     nombreProducto = findViewById(R.id.editNombreProducto);
     descripcionProducto = findViewById(R.id.editDescripcionProducto);
@@ -74,7 +78,7 @@ public class ProductoAdd extends AppCompatActivity {
     if (getIntent() != null && getIntent().getExtras() != null) {
 
       id = getIntent().getStringExtra("id");
-      setTitle("modificar producto");
+      setTitle("Modificar producto");
 
       modButton.setText(R.string.modificar);
       mDataBase.child(id).addValueEventListener(new ValueEventListener() {
@@ -97,119 +101,107 @@ public class ProductoAdd extends AppCompatActivity {
     }
 
     final Spinnerloaders spinnerloaders = new Spinnerloaders(this);
-    spinnerloaders.adapterEventos(new Spinnerloaders.SpinnerAdaperCallbackEventos() {
+    spinnerloaders.adapterEventos((adapter, eventoArrayList) -> {
+      spinnerEvento.setAdapter(adapter);
 
-      @Override
-      public void callbackEventos(final ArrayAdapter<String> adapter,
-          final ArrayList<Evento> eventoArrayList) {
-        spinnerEvento.setAdapter(adapter);
+      spinnerEvento.setOnItemSelectedListener(new OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+          String item = parent.getItemAtPosition(position).toString();
+          if (!item.equals("Seleccione una opción...")) {
 
-        spinnerEvento.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-          @Override
-          public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            String item = parent.getItemAtPosition(position).toString();
-            if (!item.equals("Seleccione una opción...")) {
+            spinnerTematica.setAdapter(null);
+            spinnerCategoria.setAdapter(null);
+            if (eventoArrayList.get(position - 1).getNombre().equals(item)) {
+              getItemName(eventoArrayList.get(position - 1).getId());
 
-              spinnerTematica.setAdapter(null);
-              spinnerCategoria.setAdapter(null);
-              if (eventoArrayList.get(position - 1).getNombre().equals(item)) {
-                getItemName(eventoArrayList.get(position - 1).getId());
+              spinnerloaders
+                  .adapterTematicas((adapter2, listaTematicas) -> {
+                    spinnerTematica.setAdapter(adapter2);
 
-                spinnerloaders
-                    .adapterTematicas(new Spinnerloaders.SpinnerAdapterCallbackTematicas() {
+                    spinnerTematica
+                        .setOnItemSelectedListener(new OnItemSelectedListener() {
+                          @Override
+                          public void onItemSelected(final AdapterView<?> parent1, View view12,
+                              int position1,
+                              long id1) {
+                            String item12 = parent1.getItemAtPosition(position1).toString();
+                            if (!item12.equals("Seleccione una opción...") && !item12
+                                .equals("No se encontró ninguna temática")) {
+                              if (listaTematicas.get(position1).getNombre().equals(item12)) {
+                                getItemName(listaTematicas.get(position1).getId());
 
-                      @Override
-                      public void callbackTematicas(ArrayAdapter<String> adapter2,
-                          final ArrayList<Tematica> listaTematicas) {
-                        spinnerTematica.setAdapter(adapter2);
+                                spinnerloaders.adapterCategorias(
+                                    (adapter3, listaCategorias) -> {
+                                      spinnerCategoria.setAdapter(adapter3);
 
-                        spinnerTematica
-                            .setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                              @Override
-                              public void onItemSelected(final AdapterView<?> parent, View view,
-                                  int position,
-                                  long id) {
-                                String item = parent.getItemAtPosition(position).toString();
-                                if (!item.equals("Seleccione una opción...") && !item
-                                    .equals("No se encontró ninguna temática")) {
-                                  if (listaTematicas.get(position).getNombre().equals(item)) {
-                                    getItemName(listaTematicas.get(position).getId());
+                                      spinnerCategoria.setOnItemSelectedListener(
+                                          new OnItemSelectedListener() {
+                                            @Override
+                                            public void onItemSelected(
+                                                AdapterView<?> adapterView, View view1, int i,
+                                                long l) {
+                                              String item1 = adapterView.getItemAtPosition(i)
+                                                  .toString();
+                                              //no se encontro ninguna
+                                              if (!parent1.getItemAtPosition(0).toString()
+                                                  .equals("No se encontró ninguna temática")
+                                                  && !item1.equals(
+                                                  "No se encontró ninguna categoría")) {
+                                                if (listaCategorias.get(i).getNombre()
+                                                    .equals(item1)) {
+                                                  getItemName(listaCategorias.get(i).getId());
+                                                }
+                                              } else {
+                                                getItemName("");
+                                              }
 
-                                    spinnerloaders.adapterCategorias(
-                                        new SpinnerAdapterCallbackCategorias() {
-                                          @Override
-                                          public void callbackCategorias(
-                                              ArrayAdapter<String> adapter3,
-                                              final ArrayList<Categoria> listaCategorias) {
-                                            spinnerCategoria.setAdapter(adapter3);
+                                            }
 
-                                            spinnerCategoria.setOnItemSelectedListener(
-                                                new OnItemSelectedListener() {
-                                                  @Override
-                                                  public void onItemSelected(
-                                                      AdapterView<?> adapterView, View view, int i,
-                                                      long l) {
-                                                    String item = adapterView.getItemAtPosition(i)
-                                                        .toString();
-                                                    //no se encontro ninguna
-                                                    if (!parent.getItemAtPosition(0).toString()
-                                                        .equals("No se encontró ninguna temática")
-                                                        && !item.equals(
-                                                        "No se encontró ninguna categoría")) {
-                                                      if (listaCategorias.get(i).getNombre()
-                                                          .equals(item)) {
-                                                        getItemName(listaCategorias.get(i).getId());
-                                                      }
-                                                    }
+                                            @Override
+                                            public void onNothingSelected(
+                                                AdapterView<?> adapterView) {
 
-                                                  }
-
-                                                  @Override
-                                                  public void onNothingSelected(
-                                                      AdapterView<?> adapterView) {
-
-                                                  }
-                                                });
-                                          }
-                                        }, nombre);
-                                  }
-                                } else {
-                                  ArrayList<String> lista = new ArrayList<>();
-                                  lista.add("No se encontró ninguna categoría");
-                                  ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                                      getApplicationContext(),
-                                      android.R.layout.simple_list_item_1, lista);
-                                  spinnerCategoria.setAdapter(adapter);
-                                }
+                                            }
+                                          });
+                                    }, nombre);
                               }
+                            } else {
+                              ArrayList<String> lista = new ArrayList<>();
+                              lista.add("No se encontró ninguna categoría");
+                              ArrayAdapter<String> adapter1 = new ArrayAdapter<>(
+                                  getApplicationContext(),
+                                  android.R.layout.simple_list_item_1, lista);
+                              spinnerCategoria.setAdapter(adapter1);
+                              getItemName("");
+                            }
+                          }
 
-                              @Override
-                              public void onNothingSelected(AdapterView<?> parent) {
+                          @Override
+                          public void onNothingSelected(AdapterView<?> parent1) {
 
-                              }
-                            });
-                      }
-                    }, nombre);
+                          }
+                        });
+                  }, nombre);
 
-              }
-
-            } else {
-              ArrayList<String> lista = new ArrayList<>();
-              lista.add("Seleccione una opción...");
-              ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
-                  android.R.layout.simple_list_item_1, lista);
-              spinnerTematica.setAdapter(adapter);
-              spinnerCategoria.setAdapter(adapter);
             }
+
+          } else {
+            ArrayList<String> lista = new ArrayList<>();
+            lista.add("Seleccione una opción...");
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
+                android.R.layout.simple_list_item_1, lista);
+            spinnerTematica.setAdapter(adapter);
+            spinnerCategoria.setAdapter(adapter);
           }
+        }
 
 
-          @Override
-          public void onNothingSelected(AdapterView<?> parent) {
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
 
-          }
-        });
-      }
+        }
+      });
     });
 
 
@@ -247,7 +239,7 @@ public class ProductoAdd extends AppCompatActivity {
           nombreProducto.setError("El nombre no debe estar vacío");
           break;
         } else if (Funciones.validarTexto(nombre) || nombre.equals("Seleccione una opción...")
-            || nombre.equals("No se encontró ninguna categoría")) {
+            || nombre.equals("No se encontró ninguna categoría") || nombre.isEmpty()) {
           DialogAlertSpinner dialogAlertSpinner = new DialogAlertSpinner(ProductoAdd.this);
           dialogAlertSpinner.DialogCreator();
           break;
@@ -273,7 +265,7 @@ public class ProductoAdd extends AppCompatActivity {
           if (!estado) {
             ErrorMensaje();
           } else if (uri == null) {
-            firebaseHelper.CategoriaProducto(producto, nombre);
+            firebaseHelper.AddRelacion(producto.getId(), nombre, "categoriaProductos");
             SuccesMensaje();
             finish();
           } else {
@@ -299,7 +291,7 @@ public class ProductoAdd extends AppCompatActivity {
                       producto = new Producto(id, nombreProducto.getText().toString(),
                           descripcionProducto.getText().toString(), downloadUri.toString(), nombre);
                       firebaseHelper.guardarDatosFirebase(producto, producto.getId());
-                      firebaseHelper.CategoriaProducto(producto, nombre);
+                      firebaseHelper.AddRelacion(producto.getId(), nombre, "categoriaProducto");
                       SuccesMensaje();
                       finish();
                     } else {
@@ -346,5 +338,11 @@ public class ProductoAdd extends AppCompatActivity {
       dialogLoader.DismisDialog();
     }
     super.finish();
+  }
+
+  @Override
+  public boolean onSupportNavigateUp() {
+    onBackPressed();
+    return true;
   }
 }
