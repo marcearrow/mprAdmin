@@ -53,6 +53,8 @@ public class ProductoAdd extends AppCompatActivity {
   private DialogLoader dialogLoader;
   private Uri uri;
   private String nombre;
+  private String spinnerElement;
+  private String relacionAntigua;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +89,11 @@ public class ProductoAdd extends AppCompatActivity {
           nombreProducto.setText(dataSnapshot.child("nombre").getValue().toString());
           imgUrl = dataSnapshot.child("imgUrl").getValue().toString();
           descripcionProducto.setText(dataSnapshot.child("descripcion").getValue().toString());
+          spinnerElement = dataSnapshot.child("categoria").getValue().toString();
+          relacionAntigua = spinnerElement;
           Funciones funciones = new Funciones();
           funciones.setImg(imgUrl, imagenProducto, getApplicationContext());
+
         }
 
         @Override
@@ -264,8 +269,14 @@ public class ProductoAdd extends AppCompatActivity {
 
           if (!estado) {
             ErrorMensaje();
-          } else if (uri == null) {
-            firebaseHelper.AddRelacion(producto.getId(), nombre, "categoriaProductos");
+          } else if (uri == null && modButton.getText().toString().toLowerCase()
+              .equals("modificar")) {
+            firebaseHelper.AddRelacion(producto.getId(), nombre, "categoriaProducto");
+            firebaseHelper.EliminarRelacion(producto.getId(), relacionAntigua, "categoriaProducto");
+            SuccesMensaje();
+            finish();
+          } else if (modButton.getText().toString().toLowerCase().equals("agregar")) {
+            firebaseHelper.AddRelacion(producto.getId(), nombre, "categoriaProducto");
             SuccesMensaje();
             finish();
           } else {

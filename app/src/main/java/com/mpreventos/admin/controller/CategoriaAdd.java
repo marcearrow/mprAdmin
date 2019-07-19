@@ -1,5 +1,10 @@
 package com.mpreventos.admin.controller;
 
+import static com.mpreventos.admin.utils.Constantes.CATEGORIAS_CHILD;
+import static com.mpreventos.admin.utils.Constantes.LOADING_IMG;
+import static com.mpreventos.admin.utils.Constantes.REQUEST_IMAGE;
+import static com.mpreventos.admin.utils.Constantes.TEMATICAS_CATEGORIAS;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -34,9 +39,8 @@ import java.util.ArrayList;
 
 public class CategoriaAdd extends AppCompatActivity {
 
-  private static final String LOADING_IMAGE_URL = "https://firebasestorage.googleapis.com/v0/b/mprfirebase-7753b.appspot.com/o/logo-mpr-decoracion.png?alt=media&token=49548e12-c035-4995-be4d-f38be90bbc06";
-  private static final String CATEGORIAS_CHILD = "categorias";
-  private static final int REQUEST_IMAGE = 2;
+  private String relacionAntigua;
+  String spinnerElement;
   private DatabaseReference mDataBase;
   private ImageView imagenCategoria;
   private EditText nombreCategoria;
@@ -76,6 +80,8 @@ public class CategoriaAdd extends AppCompatActivity {
           imgUrl = dataSnapshot.child("imgUrl").getValue().toString();
           Funciones funciones = new Funciones();
           funciones.setImg(imgUrl, imagenCategoria, getApplicationContext());
+          spinnerElement = dataSnapshot.child("tematica").getValue().toString();
+          relacionAntigua = spinnerElement;
         }
 
         @Override
@@ -185,15 +191,22 @@ public class CategoriaAdd extends AppCompatActivity {
 
           } else {
             id = firebaseHelper.getIdkey();
-            categoria = new Categoria(id, nombreCategoria.getText().toString(), LOADING_IMAGE_URL,
+            categoria = new Categoria(id, nombreCategoria.getText().toString(), LOADING_IMG,
                 nombre);
 
             Boolean estado = firebaseHelper.guardarDatosFirebase(categoria, id);
 
             if (!estado) {
               ErrorMensaje();
-            } else if (uri == null) {
-              firebaseHelper.TematicaCategora(categoria, nombre);
+            } else if (uri == null && modButton.getText().toString().toLowerCase()
+                .equals("modificar")) {
+              firebaseHelper.AddRelacion(categoria.getId(), nombre, TEMATICAS_CATEGORIAS);
+              firebaseHelper
+                  .EliminarRelacion(categoria.getId(), relacionAntigua, TEMATICAS_CATEGORIAS);
+              SuccesMensaje();
+              finish();
+            } else if (modButton.getText().toString().toLowerCase().equals("agregar")) {
+              firebaseHelper.AddRelacion(categoria.getId(), nombre, TEMATICAS_CATEGORIAS);
               SuccesMensaje();
               finish();
             } else {
@@ -218,7 +231,7 @@ public class CategoriaAdd extends AppCompatActivity {
                       categoria = new Categoria(id, nombreCategoria.getText().toString(),
                           downloadUri.toString(), nombre);
                       firebaseHelper.guardarDatosFirebase(categoria, categoria.getId());
-                      firebaseHelper.TematicaCategora(categoria, nombre);
+                      firebaseHelper.AddRelacion(categoria.getId(), nombre, TEMATICAS_CATEGORIAS);
                       SuccesMensaje();
                       finish();
                     } else {
